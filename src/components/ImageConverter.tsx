@@ -21,6 +21,7 @@ const ImageConverter: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const currentFileName = useRef<string>('');
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -52,6 +53,8 @@ const ImageConverter: React.FC = () => {
       if (!file.type.match('image.*')) {
         throw new Error('请选择有效的图片文件');
       }
+
+      currentFileName.current = file.name;
 
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -100,9 +103,11 @@ const ImageConverter: React.FC = () => {
             }
 
             const webpUrl = URL.createObjectURL(blob);
+            const webpName = currentFileName.current.replace(/\.[^/.]+$/, '') + '.webp';
+            
             setWebpImage({
               url: webpUrl,
-              name: originalImage?.name.replace(/\.[^/.]+$/, '') + '.webp' || 'converted.webp',
+              name: webpName,
               size: blob.size,
               dimensions
             });
