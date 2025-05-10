@@ -3,6 +3,10 @@
 # 确保脚本在遇到错误时停止执行
 set -e
 
+# 删除旧的构建目录
+echo "删除旧的构建目录..."
+rm -rf dist
+
 # 构建项目
 echo "开始构建项目..."
 npm run build
@@ -13,7 +17,7 @@ cd dist/image-tools
 # 初始化 git 仓库（如果不存在）
 if [ ! -d .git ]; then
     git init
-    git remote add origin https://github.com/gausszhou/image-tools.git
+    git remote add origin git@github.com:gausszhou/image-tools.git
 fi
 
 # 添加所有文件到 git
