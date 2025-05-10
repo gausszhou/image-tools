@@ -1,0 +1,73 @@
+.vscode-container {
+  background: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  padding: 32px 40px 40px 40px;
+  max-width: 600px;
+  margin: 60px auto;
+  color: #d4d4d4;
+  font-family: 'Segoe UI', 'Consolas', 'monospace';
+  position: relative;
+}
+
+.vscode-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.mac-dots {
+  display: flex;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.mac-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mac-dot.red { background: #ff5f56; }
+.mac-dot.yellow { background: #ffbd2e; }
+.mac-dot.green { background: #27c93f; }
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.tools-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.tool-card {
+  background: #252526;
+  border-radius: 8px;
+  padding: 24px 20px;
+  color: #d4d4d4;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+}
+.tool-card:hover {
+  background: #333337;
+}
+
+.home-welcome {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-description {
+  font-size: 1.2rem;
+  color: #bdbdbd;
+  margin-top: 24px;
+  text-align: center;
+}

@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import './ImageConverter.css';
 import { formatFileSize, getImageDimensions, convertToWebP } from '../utils';
 
@@ -123,18 +122,12 @@ const ImageConverter: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <div className="header">
-        <Link to="/" className="back-btn">
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-          </svg>
-          返回首页
-        </Link>
-        <h1 className="page-title">图片压缩</h1>
+    <div className="image-converter">
+      <div className="image-converter__header">
+        <h1 className="image-converter__title">图片压缩</h1>
       </div>
       <div 
-        className={`upload-area ${isDragging ? 'highlight' : ''}`}
+        className={`image-converter__upload ${isDragging ? 'image-converter__upload--dragging' : ''}`}
         onClick={handleUploadClick}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -151,9 +144,9 @@ const ImageConverter: React.FC = () => {
         />
       </div>
 
-      <div className="options">
+      <div className="image-converter__options">
         <h3>转换选项</h3>
-        <div>
+        <div className="image-converter__quality">
           <label htmlFor="quality">质量 (0-100): </label>
           <input
             type="range"
@@ -168,46 +161,46 @@ const ImageConverter: React.FC = () => {
       </div>
 
       {(progress > 0 || status) && (
-        <div className="progress-container">
+        <div className="image-converter__progress">
           <progress value={progress} max="100" />
-          <div className="status">{status}</div>
+          <div className="image-converter__status">{status}</div>
         </div>
       )}
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="image-converter__error">{error}</div>}
 
       {originalImage && webpImage && (
-        <div className="preview">
-          <div className="preview-item">
+        <div className="image-converter__preview">
+          <div className="image-converter__preview-item">
             <h3>原始图片</h3>
-            <img src={originalImage.url} alt="原始图片" className="preview-img" />
-            <div className="file-info">
+            <img src={originalImage.url} alt="原始图片" className="image-converter__preview-img" />
+            <div className="image-converter__file-info">
               {originalImage.name} ({formatFileSize(originalImage.size)})
               {originalImage.dimensions && 
                 ` ${originalImage.dimensions.width}×${originalImage.dimensions.height}`}
             </div>
           </div>
-          <div className="preview-item">
+          <div className="image-converter__preview-item">
             <h3>WebP 图片</h3>
-            <img src={webpImage.url} alt="WebP图片" className="preview-img" />
-            <div className="file-info">
+            <img src={webpImage.url} alt="WebP图片" className="image-converter__preview-img" />
+            <div className="image-converter__file-info">
               {webpImage.name} ({formatFileSize(webpImage.size)})
               {webpImage.dimensions && 
                 ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
             </div>
-            <a href={webpImage.url} download={webpImage.name} className="download-btn">
+            <a href={webpImage.url} download={webpImage.name} className="image-converter__download">
               <button>下载 WebP 图片</button>
             </a>
           </div>
-          <div className="preview-item">
+          <div className="image-converter__preview-item">
             <h3>Base64 图片</h3>
-            <img src={base64Image} alt="Base64图片" className="preview-img" />
-            <div className="file-info">
+            <img src={base64Image} alt="Base64图片" className="image-converter__preview-img" />
+            <div className="image-converter__file-info">
               {webpImage?.name.replace('.webp', '.base64')} ({formatFileSize(base64Image.length)})
               {webpImage?.dimensions && 
                 ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
             </div>
-            <button onClick={copyBase64} className="copy-btn">复制 Base64</button>
+            <button onClick={copyBase64} className="image-converter__copy">复制 Base64</button>
           </div>
         </div>
       )}
@@ -215,4 +208,4 @@ const ImageConverter: React.FC = () => {
   );
 };
 
-export default ImageConverter; 
+export default ImageConverter;
