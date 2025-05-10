@@ -8,10 +8,10 @@ function Sidebar() {
   const location = useLocation();
   return (
     <div className="layout__sidebar">
-      <nav className="layout__nav">
-        <Link to="/" className={location.pathname === '/' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>首页</Link>
-        <Link to="/compress" className={location.pathname === '/compress' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>图片压缩</Link>
-        <Link to="/scale" className={location.pathname === '/scale' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>图片缩放</Link>
+      <nav className="layout__nav g-menu second-level">
+        <Link to="/" className={location.pathname === '/' ? 'g-menu-item is-active' : 'g-menu-item'}>首页</Link>
+        <Link to="/compress" className={location.pathname === '/compress' ? 'g-menu-item is-active' : 'g-menu-item'}>图片压缩</Link>
+        <Link to="/scale" className={location.pathname === '/scale' ? 'g-menu-item is-active' : 'g-menu-item'}>图片缩放</Link>
       </nav>
     </div>
   );

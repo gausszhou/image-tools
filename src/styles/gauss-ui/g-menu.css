@@ -1,0 +1,49 @@
+.g-menu {
+  width: 100%;
+  height: 100%;
+  background-color: #373737;
+  border-left: 1px solid #373737;
+}
+
+.g-menu.first-level {
+  background-color: #373737;
+  border-left: 1px solid #373737;
+}
+
+.g-menu.second-level {
+  background-color: #272727;
+  border-left: 1px solid #272727; 
+}
+
+.g-menu.third-level {
+  background-color: #1f1f1f;
+  border-left: 1px solid #1f1f1f;
+}
+
+.g-menu-item {
+  height: 24px;
+  padding-left: 8px;
+  color: #cccccc;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: left;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.g-menu-item:hover {
+  color: #ffffff;
+  background-color: #424242;
+}
+
+.g-menu-item.is-active {
+  background-color: #424242;
+}
+
+.g-menu-item.is-active:focus {
+  background-color: #75715e;
+  border-color: #99947c;
+}
