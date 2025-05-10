@@ -9,7 +9,6 @@ export default defineConfig({
     port: 2001
   },
   build: {
-    outDir: 'dist/image-tools',
-    sourcemap: true
+    outDir: 'dist/image-tools'
   }
 })
