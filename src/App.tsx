@@ -55,8 +55,10 @@ function App() {
     <Router basename="/image-tools/">
       <div className="layout">
         <div className="layout__container">
+          <div className="layout__container--inner">
           <AppHead />
           <AppBody />
+          </div>
         </div>
       </div>
     </Router>
