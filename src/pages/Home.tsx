@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Home: React.FC = () => {
   return (
     <div className="page-container">
-      <h1>图片工具集</h1>
+      <h1 className="page-title">Image Tools</h1>
       <div className="tools-grid">
         <Link to="/compress" className="tool-card">
           <h2>图片压缩</h2>
