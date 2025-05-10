@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Slider } from 'antd';
 import './ImageCompress.css';
 import { formatFileSize, getImageDimensions, convertToWebP } from '../utils';
 
@@ -40,26 +41,34 @@ const ImageCompress: React.FC = () => {
         size: file.size,
         dimensions
       });
-  
-      try {
-        const result = await convertToWebP(originalUrl, dimensions, quality);
-        
-        setWebpImage({
-          url: result.webpUrl,
-          name: file.name.replace(/\.[^/.]+$/, '.webp'),
-          size: result.blob.size,
-          dimensions
-        });
-        setBase64Image(result.base64data);
-        setProgress(100);
-        setStatus('转换完成');
-        setTimeout(() => setStatus(''), 3000);
-      } catch (conversionError) {
-        setError(conversionError instanceof Error ? conversionError.message : '转换失败');
-        setStatus('');
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '处理图片时出错');
+      setStatus('');
+    }
+  };
+
+  const convertImage = async () => {
+    if (!originalImage) return;
+    
+    try {
+      setProgress(0);
+      setStatus('正在压缩...');
+      setError('');
+
+      const result = await convertToWebP(originalImage.url, originalImage.dimensions!, quality);
+      
+      setWebpImage({
+        url: result.webpUrl,
+        name: originalImage.name.replace(/\.[^/.]+$/, '.webp'),
+        size: result.blob.size,
+        dimensions: originalImage.dimensions
+      });
+      setBase64Image(result.base64data);
+      setProgress(100);
+      setStatus('转换完成');
+      setTimeout(() => setStatus(''), 3000);
+    } catch (conversionError) {
+      setError(conversionError instanceof Error ? conversionError.message : '转换失败');
       setStatus('');
     }
   };
@@ -135,17 +144,26 @@ const ImageCompress: React.FC = () => {
       <div className="image-converter__options">
         <h3>转换选项</h3>
         <div className="image-converter__quality">
-          <label htmlFor="quality">质量 (0-100): </label>
-          <input
-            type="range"
+          <label htmlFor="quality">质量 (0-100):</label>
+          <Slider
             id="quality"
-            min="0"
-            max="100"
+            min={0}
+            max={100}
             value={quality}
-            onChange={(e) => setQuality(Number(e.target.value))}
+            onChange={setQuality}
+            tooltip={{ formatter: (value) => `${value}%` }}
+            style={{ flex: 1, maxWidth: 300, margin: '0 8px' }}
           />
-          <span>{quality}</span>
+          <span>{quality}%</span>
         </div>
+        {originalImage && (
+          <button 
+            className="image-converter__convert-btn"
+            onClick={convertImage}
+          >
+            开始压缩
+          </button>
+        )}
       </div>
 
       {(progress > 0 || status) && (

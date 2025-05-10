@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { InputNumber } from 'antd';
 import './ImageScale.css';
 import { getImageDimensions } from '../utils';
 
@@ -46,22 +47,6 @@ const ImageScale: React.FC = () => {
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : '处理图片时出错');
-    }
-  };
-
-  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = Number(e.target.value);
-    setWidth(newWidth);
-    if (lockRatio) {
-      setHeight(Math.round(newWidth / aspectRatio.current));
-    }
-  };
-
-  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHeight = Number(e.target.value);
-    setHeight(newHeight);
-    if (lockRatio) {
-      setWidth(Math.round(newHeight * aspectRatio.current));
     }
   };
 
@@ -154,22 +139,36 @@ const ImageScale: React.FC = () => {
             <div className="image-scale__dimensions">
               <div className="image-scale__input-group">
                 <label htmlFor="width">宽度 (px):</label>
-                <input
-                  type="number"
+                <InputNumber
                   id="width"
                   value={width}
-                  onChange={handleWidthChange}
-                  min="1"
+                  onChange={(value) => {
+                    const newWidth = Number(value || 0);
+                    setWidth(newWidth);
+                    if (lockRatio) {
+                      setHeight(Math.round(newWidth / aspectRatio.current));
+                    }
+                  }}
+                  min={1}
+                  precision={0}
+                  style={{ width: 120 }}
                 />
               </div>
               <div className="image-scale__input-group">
                 <label htmlFor="height">高度 (px):</label>
-                <input
-                  type="number"
+                <InputNumber
                   id="height"
                   value={height}
-                  onChange={handleHeightChange}
-                  min="1"
+                  onChange={(value) => {
+                    const newHeight = Number(value || 0);
+                    setHeight(newHeight);
+                    if (lockRatio) {
+                      setWidth(Math.round(newHeight * aspectRatio.current));
+                    }
+                  }}
+                  min={1}
+                  precision={0}
+                  style={{ width: 120 }}
                 />
               </div>
               <div className="image-scale__lock">
