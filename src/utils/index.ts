@@ -26,10 +26,11 @@ export interface WebPConversionResult {
   base64data: string;
 }
 
-export const convertToWebP = (
+export const compressImage = (
   imageDataUrl: string,
   dimensions: { width: number; height: number },
-  quality: number
+  quality: number,
+  format = 'webp'
 ): Promise<WebPConversionResult> => {
   return new Promise((resolve, reject) => {
     try {
@@ -55,7 +56,7 @@ export const convertToWebP = (
             }
 
             const webpUrl = URL.createObjectURL(blob);
-            const webpName = 'converted.webp';
+            const webpName = 'converted.' + format;
             
             // 将 blob 转换为 base64
             const reader = new FileReader();
@@ -73,7 +74,7 @@ export const convertToWebP = (
             };
             reader.readAsDataURL(blob);
           },
-          'image/webp',
+          'image/' + format,
           quality / 100
         );
       };
