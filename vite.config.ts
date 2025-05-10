@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/image-tools/',
+  server: {
+    port: 2001
+  },
   build: {
     outDir: 'dist/image-tools',
     sourcemap: true
