@@ -34,40 +34,32 @@ const ImageConverter: React.FC = () => {
       // 创建原始图片的 URL
       const originalUrl = URL.createObjectURL(file);
       const dimensions = await getImageDimensions(originalUrl);
-
+  
       setOriginalImage({
         url: originalUrl,
         name: file.name,
         size: file.size,
         dimensions
       });
-
+  
       // 转换为 WebP
-      await convertToWebP(
-        originalUrl,
-        dimensions,
-        quality,
-        (progress, status) => {
-          setProgress(progress);
-          setStatus(status);
-        },
-        (webpUrl, webpName, blob, base64data) => {
-          setWebpImage({
-            url: webpUrl,
-            name: file.name.replace(/\.[^/.]+$/, '.webp'),
-            size: blob.size,
-            dimensions
-          });
-          setBase64Image(base64data);
-          setProgress(100);
-          setStatus('转换完成');
-          setTimeout(() => setStatus(''), 3000);
-        },
-        (error) => {
-          setError(error);
-          setStatus('');
-        }
-      );
+      try {
+        const result = await convertToWebP(originalUrl, dimensions, quality);
+        
+        setWebpImage({
+          url: result.webpUrl,
+          name: file.name.replace(/\.[^/.]+$/, '.webp'),
+          size: result.blob.size,
+          dimensions
+        });
+        setBase64Image(result.base64data);
+        setProgress(100);
+        setStatus('转换完成');
+        setTimeout(() => setStatus(''), 3000);
+      } catch (conversionError) {
+        setError(conversionError instanceof Error ? conversionError.message : '转换失败');
+        setStatus('');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '处理图片时出错');
       setStatus('');

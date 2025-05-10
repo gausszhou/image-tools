@@ -14,7 +14,7 @@
 
 .layout__container {
   width: 1536px;
-  height: 720px;
+  height: 864px;
   max-width: calc(100vw - 48px);
   max-height: calc(100vh - 48px);
   display: flex;

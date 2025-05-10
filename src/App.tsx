@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes, Link, useLocation } from 'react
 import './App.css';
 import Home from './pages/Home';
 import ImageCompress from './pages/ImageCompress';
+import ImageScale from './pages/ImageScale';
 
 function Sidebar() {
   const location = useLocation();
@@ -10,6 +11,7 @@ function Sidebar() {
       <nav className="layout__nav">
         <Link to="/" className={location.pathname === '/' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>首页</Link>
         <Link to="/compress" className={location.pathname === '/compress' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>图片压缩</Link>
+        <Link to="/scale" className={location.pathname === '/scale' ? 'layout__nav-link layout__nav-link--active' : 'layout__nav-link'}>图片缩放</Link>
       </nav>
     </div>
   );
@@ -33,6 +35,7 @@ function AppMain() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/compress" element={<ImageCompress />} />
+        <Route path="/scale" element={<ImageScale />} />
       </Routes>
     </div>
   );

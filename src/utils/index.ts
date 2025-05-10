@@ -19,55 +19,113 @@ export const getImageDimensions = (dataUrl: string): Promise<{ width: number; he
   });
 };
 
-export const convertToWebP = async (
+export interface WebPConversionResult {
+  webpUrl: string;
+  webpName: string;
+  blob: Blob;
+  base64data: string;
+}
+
+export const convertToWebP = (
   imageDataUrl: string,
   dimensions: { width: number; height: number },
-  quality: number,
-  onProgress: (progress: number, status: string) => void,
-  onComplete: (webpUrl: string, webpName: string, blob: Blob, base64data: string) => void,
-  onError: (error: string) => void
-) => {
-  try {
-    onProgress(20, '正在转换...');
+  quality: number
+): Promise<WebPConversionResult> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = dimensions.width;
+        canvas.height = dimensions.height;
 
-    const img = new Image();
-    img.onload = () => {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('无法创建canvas上下文'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('转换失败，浏览器可能不支持WebP编码'));
+              return;
+            }
+
+            const webpUrl = URL.createObjectURL(blob);
+            const webpName = 'converted.webp';
+            
+            // 将 blob 转换为 base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64data = reader.result as string;
+              resolve({
+                webpUrl,
+                webpName,
+                blob,
+                base64data
+              });
+            };
+            reader.onerror = () => {
+              reject(new Error('Base64转换失败'));
+            };
+            reader.readAsDataURL(blob);
+          },
+          'image/webp',
+          quality / 100
+        );
+      };
+
+      img.onerror = () => {
+        reject(new Error('图片加载失败'));
+      };
+
+      img.src = imageDataUrl;
+    } catch (err) {
+      reject(err instanceof Error ? err : new Error('转换过程中发生错误'));
+    }
+  });
+};
+
+
+export const scaleImage = (
+  originalUrl: string,
+  width: number,
+  height: number
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    try {
       const canvas = document.createElement('canvas');
-      canvas.width = dimensions.width;
-      canvas.height = dimensions.height;
-
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        throw new Error('无法创建canvas上下文');
+        reject(new Error('无法创建canvas上下文'));
+        return;
       }
 
-      ctx.drawImage(img, 0, 0);
-      onProgress(50, '编码WebP...');
+      // 设置 canvas 尺寸
+      canvas.width = width;
+      canvas.height = height;
 
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            throw new Error('转换失败，浏览器可能不支持WebP编码');
-          }
+      // 创建临时图片对象
+      const img = new Image();
+      img.onload = () => {
+        // 在 canvas 上绘制缩放后的图片
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // 将 canvas 转换为图片 URL
+        const scaledUrl = canvas.toDataURL('image/png');
+        resolve(scaledUrl);
+      };
 
-          const webpUrl = URL.createObjectURL(blob);
-          const webpName = 'converted.webp';
-          
-          // 将 blob 转换为 base64
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64data = reader.result as string;
-            onComplete(webpUrl, webpName, blob, base64data);
-          };
-          reader.readAsDataURL(blob);
-        },
-        'image/webp',
-        quality / 100
-      );
-    };
+      img.onerror = () => {
+        reject(new Error('图片加载失败'));
+      };
 
-    img.src = imageDataUrl;
-  } catch (err) {
-    onError(err instanceof Error ? err.message : '转换过程中发生错误');
-  }
-}; 
+      img.src = originalUrl;
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
