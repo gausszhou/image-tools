@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Slider } from 'antd';
+import { Slider, Select } from 'antd';
 import './ImageCompress.css';
-import { formatFileSize, getImageDimensions, convertToWebP } from '../utils';
+import { formatFileSize, getImageDimensions, compressImage } from '../utils';
 
 interface ImageInfo {
   url: string;
@@ -17,8 +17,8 @@ const ImageCompress: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
   const [webpImage, setWebpImage] = useState<ImageInfo | null>(null);
   const [base64Image, setBase64Image] = useState<string>('');
-  const [quality, setQuality] = useState<number>(100);
-  const [progress, setProgress] = useState<number>(0);
+  const [quality, setQuality] = useState<number>(80);
+  const [format, setFormat] = useState<string>('webp');
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -52,11 +52,11 @@ const ImageCompress: React.FC = () => {
     try {
       setStatus('开始转换');
       setError('');
-      const result = await convertToWebP(originalImage.url, originalImage.dimensions!, quality);
+      const result = await compressImage(originalImage.url, originalImage.dimensions!, quality, format);
 
       setWebpImage({
         url: result.webpUrl,
-        name: originalImage.name.replace(/\.[^/.]+$/, '.webp'),
+        name: originalImage.name.replace(/\.[^/.]+$/, '.' + format),
         size: result.blob.size,
         dimensions: originalImage.dimensions
       });
@@ -150,6 +150,17 @@ const ImageCompress: React.FC = () => {
               />
               <span>{quality}%</span>
             </div>
+            <div className="image-converter__quality">
+              <label htmlFor="quality">文件格式:</label>
+              <Select value={format} onChange={setFormat}
+                options={[
+                  { value: 'webp', label: 'WebP' },
+                  { value: 'jepg', label: 'JPEG' },
+                  { value: 'png', label: 'PNG' },
+                ]}
+                style={{ width: 120 }}
+              />
+            </div>
           </div>
           {originalImage && (
             <button
@@ -164,15 +175,16 @@ const ImageCompress: React.FC = () => {
         </div>
 
         <div className="image-converter__output">
-          
-          
+
+
           {originalImage && webpImage && (
             <div className="image-converter__preview">
               <div className="image-converter__preview-item">
                 <h3>原始图片</h3>
                 <img src={originalImage.url} alt="原始图片" className="image-converter__preview-img" />
                 <div className="image-converter__file-info">
-                  {originalImage.name} ({formatFileSize(originalImage.size)})
+                  <span>{originalImage.name} </span>
+                  <span style={{ fontWeight: 700 }}>({formatFileSize(originalImage.size)})</span>
                   {originalImage.dimensions &&
                     ` ${originalImage.dimensions.width}×${originalImage.dimensions.height}`}
                 </div>
@@ -181,7 +193,8 @@ const ImageCompress: React.FC = () => {
                 <h3>WebP 图片</h3>
                 <img src={webpImage.url} alt="WebP图片" className="image-converter__preview-img" />
                 <div className="image-converter__file-info">
-                  {webpImage.name} ({formatFileSize(webpImage.size)})
+                  <span>{webpImage.name}</span>
+                  <span style={{ fontWeight: 700 }}>({formatFileSize(webpImage.size)})</span>
                   {webpImage.dimensions &&
                     ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
                 </div>
