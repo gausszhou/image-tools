@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './ImageConverter.css';
+import { formatFileSize, getImageDimensions, convertToWebP } from '../utils';
 
 interface ImageInfo {
   url: string;
@@ -14,6 +15,7 @@ interface ImageInfo {
 const ImageConverter: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
   const [webpImage, setWebpImage] = useState<ImageInfo | null>(null);
+  const [base64Image, setBase64Image] = useState<string>('');
   const [quality, setQuality] = useState<number>(80);
   const [progress, setProgress] = useState<number>(0);
   const [status, setStatus] = useState<string>('');
@@ -23,111 +25,52 @@ const ImageConverter: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentFileName = useRef<string>('');
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-  };
-
-  const getImageDimensions = (dataUrl: string): Promise<{ width: number; height: number }> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve({
-          width: img.width,
-          height: img.height
-        });
-      };
-      img.src = dataUrl;
-    });
-  };
-
-  const handleFile = async (file: File) => {
+  const processImage = async (file: File) => {
     try {
-      setError('');
       setProgress(0);
-      setStatus('准备转换...');
+      setStatus('正在处理图片...');
+      setError('');
+      
+      // 创建原始图片的 URL
+      const originalUrl = URL.createObjectURL(file);
+      const dimensions = await getImageDimensions(originalUrl);
 
-      if (!file.type.match('image.*')) {
-        throw new Error('请选择有效的图片文件');
-      }
+      setOriginalImage({
+        url: originalUrl,
+        name: file.name,
+        size: file.size,
+        dimensions
+      });
 
-      currentFileName.current = file.name;
-
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const dataUrl = e.target?.result as string;
-        const dimensions = await getImageDimensions(dataUrl);
-
-        setOriginalImage({
-          url: dataUrl,
-          name: file.name,
-          size: file.size,
-          dimensions
-        });
-
-        convertToWebP(dataUrl, dimensions);
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '处理文件时发生错误');
-    }
-  };
-
-  const convertToWebP = async (imageDataUrl: string, dimensions: { width: number; height: number }) => {
-    try {
-      setProgress(20);
-      setStatus('正在转换...');
-
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = dimensions.width;
-        canvas.height = dimensions.height;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          throw new Error('无法创建canvas上下文');
+      // 转换为 WebP
+      await convertToWebP(
+        originalUrl,
+        dimensions,
+        quality,
+        (progress, status) => {
+          setProgress(progress);
+          setStatus(status);
+        },
+        (webpUrl, webpName, blob, base64data) => {
+          setWebpImage({
+            url: webpUrl,
+            name: file.name.replace(/\.[^/.]+$/, '.webp'),
+            size: blob.size,
+            dimensions
+          });
+          setBase64Image(base64data);
+          setProgress(100);
+          setStatus('转换完成');
+          setTimeout(() => setStatus(''), 3000);
+        },
+        (error) => {
+          setError(error);
+          setStatus('');
         }
-
-        ctx.drawImage(img, 0, 0);
-        setProgress(50);
-        setStatus('编码WebP...');
-
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              throw new Error('转换失败，浏览器可能不支持WebP编码');
-            }
-
-            const webpUrl = URL.createObjectURL(blob);
-            const webpName = currentFileName.current.replace(/\.[^/.]+$/, '') + '.webp';
-            
-            setWebpImage({
-              url: webpUrl,
-              name: webpName,
-              size: blob.size,
-              dimensions
-            });
-
-            setProgress(100);
-            setStatus('转换完成!');
-
-            setTimeout(() => {
-              setProgress(0);
-              setStatus('');
-            }, 3000);
-          },
-          'image/webp',
-          quality / 100
-        );
-      };
-
-      img.src = imageDataUrl;
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : '转换过程中发生错误');
+      setError(err instanceof Error ? err.message : '处理图片时出错');
+      setStatus('');
     }
   };
 
@@ -135,8 +78,14 @@ const ImageConverter: React.FC = () => {
     e.preventDefault();
     setIsDragging(false);
     
-    if (e.dataTransfer.files.length > 0) {
-      handleFile(e.dataTransfer.files[0]);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        processImage(file);
+      } else {
+        setError('请上传图片文件');
+      }
     }
   };
 
@@ -155,7 +104,20 @@ const ImageConverter: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
-      handleFile(e.target.files[0]);
+      const file = e.target.files[0];
+      processImage(file);
+    }
+  };
+
+  const copyBase64 = async () => {
+    if (!base64Image) return;
+    
+    try {
+      await navigator.clipboard.writeText(base64Image);
+      setStatus('Base64 已复制到剪贴板');
+      setTimeout(() => setStatus(''), 3000);
+    } catch (err) {
+      setError('复制失败，请手动复制');
     }
   };
 
@@ -228,6 +190,16 @@ const ImageConverter: React.FC = () => {
             <a href={webpImage.url} download={webpImage.name} className="download-btn">
               <button>下载 WebP 图片</button>
             </a>
+          </div>
+          <div className="preview-item">
+            <h3>Base64 图片</h3>
+            <img src={base64Image} alt="Base64图片" className="preview-img" />
+            <div className="file-info">
+              {webpImage?.name.replace('.webp', '.base64')} ({formatFileSize(base64Image.length)})
+              {webpImage?.dimensions && 
+                ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
+            </div>
+            <button onClick={copyBase64} className="copy-btn">复制 Base64</button>
           </div>
         </div>
       )}
