@@ -17,24 +17,23 @@ const ImageCompress: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
   const [webpImage, setWebpImage] = useState<ImageInfo | null>(null);
   const [base64Image, setBase64Image] = useState<string>('');
-  const [quality, setQuality] = useState<number>(80);
+  const [quality, setQuality] = useState<number>(100);
   const [progress, setProgress] = useState<number>(0);
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const currentFileName = useRef<string>('');
 
   const processImage = async (file: File) => {
     try {
-      setProgress(0);
-      setStatus('正在处理图片...');
+
+      setStatus('图片已就绪...');
       setError('');
-      
+
       const originalUrl = URL.createObjectURL(file);
       const dimensions = await getImageDimensions(originalUrl);
-  
+
       setOriginalImage({
         url: originalUrl,
         name: file.name,
@@ -49,14 +48,12 @@ const ImageCompress: React.FC = () => {
 
   const convertImage = async () => {
     if (!originalImage) return;
-    
-    try {
-      setProgress(0);
-      setStatus('正在压缩...');
-      setError('');
 
+    try {
+      setStatus('开始转换');
+      setError('');
       const result = await convertToWebP(originalImage.url, originalImage.dimensions!, quality);
-      
+
       setWebpImage({
         url: result.webpUrl,
         name: originalImage.name.replace(/\.[^/.]+$/, '.webp'),
@@ -64,9 +61,7 @@ const ImageCompress: React.FC = () => {
         dimensions: originalImage.dimensions
       });
       setBase64Image(result.base64data);
-      setProgress(100);
       setStatus('转换完成');
-      setTimeout(() => setStatus(''), 3000);
     } catch (conversionError) {
       setError(conversionError instanceof Error ? conversionError.message : '转换失败');
       setStatus('');
@@ -76,7 +71,7 @@ const ImageCompress: React.FC = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
@@ -110,11 +105,10 @@ const ImageCompress: React.FC = () => {
 
   const copyBase64 = async () => {
     if (!base64Image) return;
-    
+
     try {
       await navigator.clipboard.writeText(base64Image);
       setStatus('Base64 已复制到剪贴板');
-      setTimeout(() => setStatus(''), 3000);
     } catch (err) {
       setError('复制失败，请手动复制');
     }
@@ -122,94 +116,87 @@ const ImageCompress: React.FC = () => {
 
   return (
     <div className="image-converter">
-        <h1 className="image-converter__title">图片压缩</h1>
-      <div 
-        className={`image-converter__upload ${isDragging ? 'image-converter__upload--dragging' : ''}`}
-        onClick={handleUploadClick}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        <h3>点击或拖放图片到此处</h3>
-        <p>支持 JPG, PNG, GIF, BMP 等格式</p>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ display: 'none' }}
-        />
-      </div>
-
-      <div className="image-converter__options">
-        <h3>转换选项</h3>
-        <div className="image-converter__quality">
-          <label htmlFor="quality">质量 (0-100):</label>
-          <Slider
-            id="quality"
-            min={0}
-            max={100}
-            value={quality}
-            onChange={setQuality}
-            tooltip={{ formatter: (value) => `${value}%` }}
-            style={{ flex: 1, maxWidth: 300, margin: '0 8px' }}
-          />
-          <span>{quality}%</span>
-        </div>
-        {originalImage && (
-          <button 
-            className="image-converter__convert-btn"
-            onClick={convertImage}
+      <h1 className="image-converter__title">图片压缩</h1>
+      <div className="image-converter__body">
+        <div className="image-converter__input">
+          <div
+            className={`image-converter__upload ${isDragging ? 'image-converter__upload--dragging' : ''}`}
+            onClick={handleUploadClick}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
           >
-            开始压缩
-          </button>
-        )}
+            <h3>点击或拖放图片到此处</h3>
+            <p>支持 JPG, PNG, GIF, BMP 等格式</p>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+          </div>
+          <div className="image-converter__options">
+            <div className="image-converter__quality">
+              <label htmlFor="quality">图像质量:</label>
+              <Slider
+                id="quality"
+                min={0}
+                max={100}
+                value={quality}
+                onChange={setQuality}
+                tooltip={{ formatter: (value) => `${value}%` }}
+                style={{ flex: 1, maxWidth: 300, margin: '0 8px' }}
+              />
+              <span>{quality}%</span>
+            </div>
+          </div>
+          {originalImage && (
+            <button
+              className="image-converter__convert-btn"
+              onClick={convertImage}
+            >
+              开始压缩
+            </button>
+          )}
+          {error && <div className="image-converter__error">{error}</div>}
+          {status && <div className="image-converter__status">{status}</div>}
+        </div>
+
+        <div className="image-converter__output">
+          
+          
+          {originalImage && webpImage && (
+            <div className="image-converter__preview">
+              <div className="image-converter__preview-item">
+                <h3>原始图片</h3>
+                <img src={originalImage.url} alt="原始图片" className="image-converter__preview-img" />
+                <div className="image-converter__file-info">
+                  {originalImage.name} ({formatFileSize(originalImage.size)})
+                  {originalImage.dimensions &&
+                    ` ${originalImage.dimensions.width}×${originalImage.dimensions.height}`}
+                </div>
+              </div>
+              <div className="image-converter__preview-item">
+                <h3>WebP 图片</h3>
+                <img src={webpImage.url} alt="WebP图片" className="image-converter__preview-img" />
+                <div className="image-converter__file-info">
+                  {webpImage.name} ({formatFileSize(webpImage.size)})
+                  {webpImage.dimensions &&
+                    ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
+                </div>
+                <div>
+                  <a href={webpImage.url} download={webpImage.name} className="image-converter__download">
+                    <button>下载图片</button>
+                  </a>
+                  <button onClick={copyBase64} className="image-converter__copy">复制 Base64</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {(progress > 0 || status) && (
-        <div className="image-converter__progress">
-          <progress value={progress} max="100" />
-          <div className="image-converter__status">{status}</div>
-        </div>
-      )}
-
-      {error && <div className="image-converter__error">{error}</div>}
-
-      {originalImage && webpImage && (
-        <div className="image-converter__preview">
-          <div className="image-converter__preview-item">
-            <h3>原始图片</h3>
-            <img src={originalImage.url} alt="原始图片" className="image-converter__preview-img" />
-            <div className="image-converter__file-info">
-              {originalImage.name} ({formatFileSize(originalImage.size)})
-              {originalImage.dimensions && 
-                ` ${originalImage.dimensions.width}×${originalImage.dimensions.height}`}
-            </div>
-          </div>
-          <div className="image-converter__preview-item">
-            <h3>WebP 图片</h3>
-            <img src={webpImage.url} alt="WebP图片" className="image-converter__preview-img" />
-            <div className="image-converter__file-info">
-              {webpImage.name} ({formatFileSize(webpImage.size)})
-              {webpImage.dimensions && 
-                ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
-            </div>
-            <a href={webpImage.url} download={webpImage.name} className="image-converter__download">
-              <button>下载 WebP 图片</button>
-            </a>
-          </div>
-          <div className="image-converter__preview-item">
-            <h3>Base64 图片</h3>
-            <img src={base64Image} alt="Base64图片" className="image-converter__preview-img" />
-            <div className="image-converter__file-info">
-              {webpImage?.name.replace('.webp', '.base64')} ({formatFileSize(base64Image.length)})
-              {webpImage?.dimensions && 
-                ` ${webpImage.dimensions.width}×${webpImage.dimensions.height}`}
-            </div>
-            <button onClick={copyBase64} className="image-converter__copy">复制 Base64</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
