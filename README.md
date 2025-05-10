@@ -1,8 +1,10 @@
 # image-tools
 
-## features
+## 功能列表
 
-- [x] image compress to webp
-- [ ] support batch compress
-- [ ] support zip uncompress and compresss
-- [ ] image convert to base64
+- [x] 图片压缩
+  - [x] 单个图片
+  - [ ] 多个图片/文件夹
+- [ ] 图片放缩
+- [ ] 
+
