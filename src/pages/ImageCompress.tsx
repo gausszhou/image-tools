@@ -190,7 +190,7 @@ const ImageCompress: React.FC = () => {
                 </div>
               </div>
               <div className="image-converter__preview-item">
-                <h3>WebP 图片</h3>
+                <h3>压缩后图片</h3>
                 <img src={webpImage.url} alt="WebP图片" className="image-converter__preview-img" />
                 <div className="image-converter__file-info">
                   <span>{webpImage.name}</span>
