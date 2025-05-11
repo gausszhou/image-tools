@@ -92,7 +92,7 @@ const ImageScale: React.FC = () => {
           }} ></ProcessNodeScale>
           {originalImage && (
             <button className="image-tool__button" onClick={processImage}>
-              开始缩放
+              开始
             </button>
           )}
           {error && <div className="image-converter__error">{error}</div>}

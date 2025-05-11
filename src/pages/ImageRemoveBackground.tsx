@@ -76,7 +76,7 @@ const ImageRemoveBackground: React.FC = () => {
           }} ></ProcessNodeCompress>
           {originalImage && (
             <button className="image-tool__button" onClick={processImage}>
-              开始缩放
+              开始
             </button>
           )}
           {error && <div className="image-tool__error">{error}</div>}

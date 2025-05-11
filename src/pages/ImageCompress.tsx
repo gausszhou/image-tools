@@ -78,7 +78,7 @@ const ImageCompress: React.FC = () => {
               className="image-converter__convert-btn"
               onClick={convertImage}
             >
-              开始压缩
+              开始
             </button>
           )}
           {error && <div className="image-converter__error">{error}</div>}

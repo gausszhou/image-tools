@@ -15,7 +15,7 @@ function Sidebar() {
         <Link to="/compress" className={location.pathname === '/compress' ? 'g-menu-item is-active' : 'g-menu-item'}>图片压缩</Link>
         <Link to="/scale" className={location.pathname === '/scale' ? 'g-menu-item is-active' : 'g-menu-item'}>图片缩放</Link>
         <Link to="/remove-bg" className={location.pathname === '/remove-bg' ? 'g-menu-item is-active' : 'g-menu-item'}>去除背景</Link>
-        <Link to="/compose" className={location.pathname === '/compose' ? 'g-menu-item is-active' : 'g-menu-item'}>组合工具</Link>
+        <Link to="/compose" className={location.pathname === '/compose' ? 'g-menu-item is-active' : 'g-menu-item'}>拖拽组合</Link>
       </nav>
     </div>
   );
