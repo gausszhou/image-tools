@@ -3,6 +3,7 @@ import './App.css';
 import Home from './pages/Home';
 import ImageCompress from './pages/ImageCompress';
 import ImageScale from './pages/ImageScale';
+import ImageCompose from './pages/ImageCompose';
 
 function Sidebar() {
   const location = useLocation();
@@ -12,6 +13,7 @@ function Sidebar() {
         <Link to="/" className={location.pathname === '/' ? 'g-menu-item is-active' : 'g-menu-item'}>首页</Link>
         <Link to="/compress" className={location.pathname === '/compress' ? 'g-menu-item is-active' : 'g-menu-item'}>图片压缩</Link>
         <Link to="/scale" className={location.pathname === '/scale' ? 'g-menu-item is-active' : 'g-menu-item'}>图片缩放</Link>
+        <Link to="/compose" className={location.pathname === '/compose' ? 'g-menu-item is-active' : 'g-menu-item'}>组合工具</Link>
       </nav>
     </div>
   );
@@ -36,6 +38,7 @@ function AppMain() {
         <Route path="/" element={<Home />} />
         <Route path="/compress" element={<ImageCompress />} />
         <Route path="/scale" element={<ImageScale />} />
+        <Route path="/compose" element={<ImageCompose />} />
       </Routes>
     </div>
   );

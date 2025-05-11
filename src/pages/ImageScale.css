@@ -29,25 +29,6 @@
   line-height: 1;
 }
 
-.image-scale__upload {
-  color: #fff;
-  border: 2px dashed #666;
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.image-scale__upload:hover {
-  border-color: #999;
-}
-
-.image-scale__upload--dragging {
-  border-color: #2196f3;
-  background-color: rgba(33, 150, 243, 0.1);
-}
-
 .image-scale__error {
   color: #ff8a80;
   text-align: center;
@@ -128,43 +109,4 @@
   padding: 8px;
   background-color: #fff;
   border-radius: 8px;
-}
-
-.image-scale__original,
-.image-scale__scaled {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #fff;
-  border: 2px solid #409eff;
-}
-
-.image-scale__original img,
-.image-scale__scaled img {
-  max-width: 100%;
-  max-height: 400px;
-  object-fit: contain;
-}
-
-.image-scale__info {
-  color: #000;
-  font-size: 0.9em;
-}
-
-.image-scale__download {
-  display: block;
-  padding: 10px;
-  text-align: center;
-  background: #2196f3;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-.image-scale__download:hover {
-  background: #1976d2;
 }
