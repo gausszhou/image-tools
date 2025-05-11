@@ -1,6 +1,6 @@
 # image-tools
 
-## 功能
+## Features
 
 - [x] 图片压缩
   - [x] 格式转换
@@ -9,11 +9,12 @@
 - [x] 图片放缩
   - [x] 格式转换
 - [ ] 图片裁剪
-- [ ] 方图快裁
+  - [ ] 基本裁切
+  - [ ] 背景填充
 - [x] 去除背景
 - [ ] 组合工具
 
-## 预览
+## Preview
 
 ![](https://www.gausszhou.top/static/data/github/image-tools/1.webp)
 
