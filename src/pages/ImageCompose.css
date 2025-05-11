@@ -3,3 +3,11 @@
     margin: 0 auto;
     color: #fff;
 }
+
+.image-compose__title {
+  color: #fff;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+}

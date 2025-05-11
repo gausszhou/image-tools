@@ -1,35 +1,28 @@
 import React, { useState } from 'react';
-import ProcessNodeDestination from '../components/ProcessNodeDestination';
-import ProcessNodeScale from '../components/ProcessNodeScale';
-import ProcessNodeSource from "../components/ProcessNodeSource";
-import { EnumImageType, ImageInfo } from '../types/image';
 import { getImageDimensions } from '../utils';
-import { compressAndScaleImage } from '../utils/process';
-import './ImageScale.css';
+import './ImageCompose.css';
+import ProcessNodeSource from "../components/ProcessNodeSource";
 
-const ImageScale: React.FC = () => {
+import { EnumImageType, ImageInfo } from '../types/image';
+import ProcessNodeDestination from '../components/ProcessNodeDestination';
+import { removeBg } from '../utils/process';
+
+const ImageRemoveBackground: React.FC = () => {
+
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
-  const [scaledImage, setScaledImage] = useState<ImageInfo | null>(null);
+  const [outputImage, setOutputImage] = useState<ImageInfo | null>(null);
 
-  const [width, setWidth] = useState<number>(0);
-  const [height, setHeight] = useState<number>(0);
-  const [aspectRatio, setAspectRatio] = useState<number>(1);
-  const [lockRatio, setLockRatio] = useState<boolean>(true);
 
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const onImageSuccess = async (file: File) => {
-    setStatus('图片已就绪');
+    setStatus('图片已就绪...');
     setError('');
 
     const originalUrl = URL.createObjectURL(file);
     const dimensions = await getImageDimensions(originalUrl);
-    if (dimensions) {
-      setWidth(dimensions.width);
-      setHeight(dimensions.height);
-      setAspectRatio(dimensions.width / dimensions.height);
-    }
+
 
     setOriginalImage({
       url: originalUrl,
@@ -48,15 +41,15 @@ const ImageScale: React.FC = () => {
 
   const processImage = async () => {
     if (!originalImage) {
-      setError('请选择图片');  
+      setError('请选择图片');
       return;
     }
-
     try {
-      setStatus('处理中...');
-      setError('');
-      const result = await compressAndScaleImage(originalImage.name, originalImage.url, { width, height })
-      setScaledImage({
+      setStatus('处理中，此任务比较耗时，请耐心等待...');
+      setOutputImage(null)
+      const result = await removeBg(originalImage.name, originalImage.url, originalImage.dimensions, 100, originalImage.type)
+      setStatus('处理完成');
+      setOutputImage({
         url: result.url,
         name: result.name,
         size: result.blob.size,
@@ -64,38 +57,31 @@ const ImageScale: React.FC = () => {
         blob: result.blob,
         dimensions: result.dimensions
       });
-      setStatus('处理完成');
     } catch (error: any) {
-      setStatus('');
       onImageError(error)
     }
-  };
 
+  }
   return (
     <div className="image-tool">
-      <h1 className="image-tool__title">图片缩放</h1>
+      <h1 className="image-tool__title">去除背景</h1>
       <div className="image-tool__body">
         <div className="image-tool__input">
           <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
-          <ProcessNodeScale aspectRatio={aspectRatio} width={width} height={height} lockRatio={lockRatio} onChange={(width, height, lockRatio) => {
-            setWidth(width);
-            setHeight(height);
-            setLockRatio(lockRatio)
-          }} ></ProcessNodeScale>
           {originalImage && (
             <button className="image-tool__button" onClick={processImage}>
               开始缩放
             </button>
           )}
-          {error && <div className="image-converter__error">{error}</div>}
-          {status && <div className="image-converter__status">{status}</div>}
+          {error && <div className="image-tool__error">{error}</div>}
+          {status && <div className="image-tool__status">{status}</div>}
         </div>
         <div className="image-tool__output">
-          {originalImage && scaledImage && (
+          {originalImage && outputImage && (
             <div className="image-scale__content">
               <div className="image-scale__preview">
                 <ProcessNodeDestination title="原始图片" image={originalImage}></ProcessNodeDestination>
-                <ProcessNodeDestination title="缩放后图片" image={scaledImage}></ProcessNodeDestination>
+                <ProcessNodeDestination title="去除背景后图片" image={outputImage}></ProcessNodeDestination>
               </div>
             </div>
           )}
@@ -105,4 +91,4 @@ const ImageScale: React.FC = () => {
   );
 };
 
-export default ImageScale;
+export default ImageRemoveBackground;

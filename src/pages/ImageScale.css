@@ -3,13 +3,6 @@
   margin: 0 auto;
 }
 
-.image-scale__body {
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  gap: 20px;
-}
-
 .image-scale__input {
   width: 300px;
   min-width: 300px;
@@ -39,7 +32,7 @@
 
 .image-scale__controls {
   background-color: rgba(245, 245, 245, 0.1);
-  margin: 20px 0;
+  margin-top: 20px;
   padding: 20px;
   border-radius: 8px;
   display: flex;
