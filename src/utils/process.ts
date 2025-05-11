@@ -77,6 +77,7 @@ export function removeBg(originName: string,
     format = EnumImageType.WEBP): Promise<ProcessResult> {
 
     return removeBackground(imageDataUrl, {
+        device: 'gpu',
         output: {
             format,
             quality
