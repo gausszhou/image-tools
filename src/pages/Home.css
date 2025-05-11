@@ -1,21 +1,3 @@
-.vscode-container {
-  background: #1e1e1e;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  padding: 32px 40px 40px 40px;
-  max-width: 600px;
-  margin: 60px auto;
-  color: #d4d4d4;
-  font-family: 'Segoe UI', 'Consolas', 'monospace';
-  position: relative;
-}
-
-.vscode-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
 .mac-dots {
   display: flex;
   gap: 8px;
@@ -37,6 +19,7 @@
   font-size: 2rem;
   font-weight: bold;
   color: #fff;
+  line-height: 1;
 }
 
 .tools-grid {

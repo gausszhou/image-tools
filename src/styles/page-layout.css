@@ -22,12 +22,12 @@
 .image-tool__input {
   width: 300px;
   min-width: 300px;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .image-tool__output {
   flex: 1;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .image-tool__button {
@@ -60,4 +60,12 @@
     padding: 10px;
     background-color: rgba(244, 67, 54, 0.1);
     border-radius: 4px;
+}
+
+
+.image-tool__preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    border-radius: 8px;
 }

@@ -25,8 +25,8 @@ const ProcessNodeDestination: React.FC<DesinationProps> = ({
             <img className="destination-image" src={url} alt={title} />
             <div className="process-node-destination__file-info">
                 <p><span className="file-info__label">文件名称</span><span className='file-name'>{name}</span></p>
-                <p><span className="file-info__label">文件大小</span>({formatFileSize(size)})</p>
-                <p><span className="file-info__label">图像宽高</span>{`${width}×${height}`}</p>
+                <p><span className="file-info__label">文件大小</span>{formatFileSize(size)}</p>
+                <p><span className="file-info__label">图像宽高</span>{`${width} × ${height}`}</p>
             </div>
             <div className="process-node-destination__button-group">
                 <a

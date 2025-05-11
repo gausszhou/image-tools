@@ -95,13 +95,13 @@ const ImageScale: React.FC = () => {
               开始
             </button>
           )}
-          {error && <div className="image-converter__error">{error}</div>}
-          {status && <div className="image-converter__status">{status}</div>}
+          {error && <div className="image-tool__error">{error}</div>}
+          {status && <div className="image-tool__status">{status}</div>}
         </div>
         <div className="image-tool__output">
           {originalImage && scaledImage && (
             <div className="image-scale__content">
-              <div className="image-scale__preview">
+              <div className="image-tool__preview">
                 <ProcessNodeDestination title="原始图片" image={originalImage}></ProcessNodeDestination>
                 <ProcessNodeDestination title="缩放后图片" image={scaledImage}></ProcessNodeDestination>
               </div>

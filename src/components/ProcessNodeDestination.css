@@ -3,25 +3,25 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 15px;
+    padding: 10px 10px 20px 10px;
     border-radius: 8px;
-    background-color: #fff;
-    border: 2px solid #409eff;
-
+    background-color: #272727;
 }
 
 .destination-title {
-    color: #000;
+    color: #fff;
+    line-height: 1;
 }
 
 .process-node-destination img {
-    max-width: 100%;
-  max-height: 400px;
+  max-width: 100%;
+  max-height: 300px;
   object-fit: contain;
+  aspect-ratio: 16 / 9;
 }
 
 .process-node-destination__file-info {
-    color: #000;
+    color: #fff;
     font-size: 0.9em;
     margin: 10px 0;
 }
@@ -31,7 +31,7 @@
 }
 
 .process-node-destination__link {
-    background-color: #2196f3;
+    background-color: #2092ef;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -42,7 +42,7 @@
     text-decoration: none;
 }
 .process-node-destination__link + .process-node-destination__link {
-    margin-left: 4px;
+    margin-left: 8px;
 }
 
 button.process-node-destination__link,

@@ -64,10 +64,10 @@ const ImageCompress: React.FC = () => {
   };
 
   return (
-    <div className="image-converter">
-      <h1 className="image-converter__title">图片压缩</h1>
-      <div className="image-converter__body">
-        <div className="image-converter__input">
+    <div className="image-tool">
+      <h1 className="image-tool__title">图片压缩</h1>
+      <div className="image-tool__body">
+        <div className="image-tool__input">
           <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
           <ProcessNodeCompress quality={quality} format={format} onChange={(quality, format) => {
             setQuality(quality);
@@ -75,18 +75,18 @@ const ImageCompress: React.FC = () => {
           }} ></ProcessNodeCompress>
           {originalImage && (
             <button
-              className="image-converter__convert-btn"
+              className="image-tool__button"
               onClick={convertImage}
             >
               开始
             </button>
           )}
-          {error && <div className="image-converter__error">{error}</div>}
-          {status && <div className="image-converter__status">{status}</div>}
+          {error && <div className="image-tool__error">{error}</div>}
+          {status && <div className="image-tool__status">{status}</div>}
         </div>
-        <div className="image-converter__output">
+        <div className="image-tool__output">
           {originalImage && compressedImage && (
-            <div className="image-converter__preview">
+            <div className="image-tool__preview">
               <ProcessNodeDestination title="原始图片" image={originalImage}></ProcessNodeDestination>
               <ProcessNodeDestination title="压缩后图片" image={compressedImage}></ProcessNodeDestination>
             </div>
