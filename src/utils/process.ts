@@ -48,7 +48,7 @@ export const compressAndScaleImage = (
                         const url = URL.createObjectURL(blob);
                         resolve({
                             url,
-                            name: replaceFileExtension(originName, format.split('/')[0]),
+                            name: replaceFileExtension(originName, format.split('/')[1]),
                             blob,
                             type: format,
                             dimensions: dimensions
@@ -87,7 +87,7 @@ export function removeBg(originName: string,
         const url = URL.createObjectURL(blob);
         return Promise.resolve({
             url,
-            name: replaceFileExtension(originName, format.split('/')[0]),
+            name: replaceFileExtension(originName, format.split('/')[1]),
             blob,
             type: format,
             dimensions: dimensions
