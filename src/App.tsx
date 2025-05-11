@@ -1,10 +1,10 @@
-import { Route, BrowserRouter as Router, Routes, Link, useLocation } from 'react-router-dom';
+import { Link, Route, HashRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Home from './pages/Home';
-import ImageCompress from './pages/ImageCompress';
-import ImageScale from './pages/ImageScale';
 import ImageCompose from './pages/ImageCompose';
+import ImageCompress from './pages/ImageCompress';
 import ImageRemoveBackground from './pages/ImageRemoveBackground';
+import ImageScale from './pages/ImageScale';
 
 function Sidebar() {
   const location = useLocation();
@@ -58,12 +58,12 @@ function AppBody() {
 
 function App() {
   return (
-    <Router basename="/image-tools/">
+    <Router>
       <div className="layout">
         <div className="layout__container">
           <div className="layout__container--inner">
-          <AppHead />
-          <AppBody />
+            <AppHead />
+            <AppBody />
           </div>
         </div>
       </div>
