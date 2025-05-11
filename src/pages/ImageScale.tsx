@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeScale from '../components/ProcessNodeScale';
 import ProcessNodeSource from "../components/ProcessNodeSource";
+import ProcessNodeCompress from "../components/ProcessNodeCompress";
 import { EnumImageType, ImageInfo } from '../types/image';
 import { getImageDimensions } from '../utils';
 import { compressAndScaleImage } from '../utils/process';
@@ -10,6 +11,9 @@ import './ImageScale.css';
 const ImageScale: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
   const [scaledImage, setScaledImage] = useState<ImageInfo | null>(null);
+
+  const [quality, setQuality] = useState<number>(80);
+  const [format, setFormat] = useState<EnumImageType>(EnumImageType.WEBP);
 
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
@@ -48,14 +52,14 @@ const ImageScale: React.FC = () => {
 
   const processImage = async () => {
     if (!originalImage) {
-      setError('请选择图片');  
+      setError('请选择图片');
       return;
     }
 
     try {
       setStatus('处理中...');
       setError('');
-      const result = await compressAndScaleImage(originalImage.name, originalImage.url, { width, height })
+      const result = await compressAndScaleImage(originalImage.name, originalImage.url, { width, height }, quality, format)
       setScaledImage({
         url: result.url,
         name: result.name,
@@ -77,6 +81,10 @@ const ImageScale: React.FC = () => {
       <div className="image-tool__body">
         <div className="image-tool__input">
           <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
+          <ProcessNodeCompress quality={quality} format={format} onChange={(quality, format) => {
+            setQuality(quality);
+            setFormat(format);
+          }} ></ProcessNodeCompress>
           <ProcessNodeScale aspectRatio={aspectRatio} width={width} height={height} lockRatio={lockRatio} onChange={(width, height, lockRatio) => {
             setWidth(width);
             setHeight(height);

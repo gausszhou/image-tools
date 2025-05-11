@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { getImageDimensions } from '../utils';
-import './ImageCompose.css';
-import ProcessNodeSource from "../components/ProcessNodeSource";
-
-import { EnumImageType, ImageInfo } from '../types/image';
+import ProcessNodeCompress from "../components/ProcessNodeCompress";
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
+import ProcessNodeSource from "../components/ProcessNodeSource";
+import { EnumImageType, ImageInfo } from '../types/image';
+import { getImageDimensions } from '../utils';
 import { removeBg } from '../utils/process';
+import './ImageCompose.css';
 
 const ImageRemoveBackground: React.FC = () => {
 
   const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
   const [outputImage, setOutputImage] = useState<ImageInfo | null>(null);
 
+  const [quality, setQuality] = useState<number>(80);
+  const [format, setFormat] = useState<EnumImageType>(EnumImageType.WEBP);
 
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -47,7 +49,7 @@ const ImageRemoveBackground: React.FC = () => {
     try {
       setStatus('处理中，此任务比较耗时，请耐心等待...');
       setOutputImage(null)
-      const result = await removeBg(originalImage.name, originalImage.url, originalImage.dimensions, 100, originalImage.type)
+      const result = await removeBg(originalImage.name, originalImage.url, originalImage.dimensions, quality, format)
       setStatus('处理完成');
       setOutputImage({
         url: result.url,
@@ -68,6 +70,10 @@ const ImageRemoveBackground: React.FC = () => {
       <div className="image-tool__body">
         <div className="image-tool__input">
           <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
+          <ProcessNodeCompress quality={quality} format={format} onChange={(quality, format) => {
+            setQuality(quality);
+            setFormat(format);
+          }} ></ProcessNodeCompress>
           {originalImage && (
             <button className="image-tool__button" onClick={processImage}>
               开始缩放
