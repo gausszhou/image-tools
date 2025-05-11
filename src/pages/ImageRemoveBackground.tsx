@@ -5,7 +5,6 @@ import ProcessNodeSource from "../components/ProcessNodeSource";
 import { EnumImageType, ImageInfo } from '../types/image';
 import { getImageDimensions } from '../utils';
 import { removeBg } from '../utils/process';
-import './ImageCompose.css';
 
 const ImageRemoveBackground: React.FC = () => {
 
