@@ -84,8 +84,8 @@ const ImageRemoveBackground: React.FC = () => {
         </div>
         <div className="image-tool__output">
           {originalImage && outputImage && (
-            <div className="image-scale__content">
-              <div className="image-scale__preview">
+            <div className="image-tool__content">
+              <div className="image-tool__preview">
                 <ProcessNodeDestination title="原始图片" image={originalImage}></ProcessNodeDestination>
                 <ProcessNodeDestination title="去除背景后图片" image={outputImage}></ProcessNodeDestination>
               </div>

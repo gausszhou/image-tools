@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import ProcessNodeCompress from "../components/ProcessNodeCompress";
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeSource from "../components/ProcessNodeSource";
-import { getImageDimensions } from '../utils';
-import './ImageCompress.css';
 import { EnumImageType, ImageInfo } from '../types/image';
+import { getImageDimensions } from '../utils';
 import { compressAndScaleImage } from '../utils/process';
 
 const ImageCompress: React.FC = () => {

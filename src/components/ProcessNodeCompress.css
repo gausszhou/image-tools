@@ -7,3 +7,14 @@
     flex-direction: column;
     gap: 20px;
 }
+
+.image-converter__quality {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-converter__quality label {
+  white-space: nowrap;
+}
+
