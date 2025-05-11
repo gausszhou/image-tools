@@ -38,7 +38,7 @@ export const compressAndScaleImage = (
                     reject(new Error('无法创建canvas上下文'));
                     return;
                 }
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 canvas.toBlob(
                     (blob) => {
                         if (!blob) {
