@@ -1,7 +1,8 @@
 .image-tool {
-    box-sizing: border-box;
-    margin: 0 auto;
-    color: #fff;
+  box-sizing: border-box;
+  margin: 0 auto;
+  color: #fff;
+  width: 100%;
 }
 
 .image-tool__title {
@@ -20,16 +21,6 @@
   padding-top: 20px;
 }
 
-.image-tool__input {
-  width: 300px;
-  min-width: 300px;
-  padding-left: 20px;
-}
-
-.image-tool__output {
-  flex: 1;
-  padding-right: 20px;
-}
 
 .image-tool__button {
   background: #2196f3;
@@ -49,18 +40,18 @@
 }
 
 .image-tool__status {
-    text-align: center;
-    margin-top: 10px;
-    color: #64b5f6;
+  text-align: center;
+  margin-top: 10px;
+  color: #64b5f6;
 }
 
 .image-tool__error {
-    color: #ff8a80;
-    text-align: center;
-    margin: 10px 0;
-    padding: 10px;
-    background-color: rgba(244, 67, 54, 0.1);
-    border-radius: 4px;
+  color: #ff8a80;
+  text-align: center;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 4px;
 }
 
 .image-tool__content {
@@ -70,10 +61,7 @@
   gap: 20px;
 }
 
-
 .image-tool__preview {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 16px;
-    border-radius: 8px;
+  display: flex;
+  gap: 16px;
 }

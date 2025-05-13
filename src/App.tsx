@@ -18,9 +18,7 @@ function AppHead() {
 
 function AppMain() {
   return (
-    <div className="layout__main">
-      <Home />
-    </div>
+    <Home />
   );
 }
 

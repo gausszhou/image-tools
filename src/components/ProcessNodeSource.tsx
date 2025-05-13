@@ -64,8 +64,8 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        <h3>点击或拖放图片到此处</h3>
-        <p>支持 JPG, PNG, GIF, BMP 等格式</p>
+        <h3>点击或拖放图片/文件夹到此处</h3>
+        <p>支持 WebP, JPG, PNG 等格式</p>
         <input
           type="file"
           ref={fileInputRef}
