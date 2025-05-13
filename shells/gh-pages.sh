@@ -3,16 +3,15 @@
 # 确保脚本在遇到错误时停止执行
 set -e
 
-# 删除旧的构建目录
+# 删除旧的目录
 echo "删除旧的构建目录..."
 rm -rf dist
 
-# 构建项目
-echo "开始构建项目..."
-npm run build
+mkdir dist
+cp refresh.html dist/index.html
 
 # 进入构建目录
-cd dist/image-tools
+cd dist
 
 # 初始化 git 仓库（如果不存在）
 if [ ! -d .git ]; then
