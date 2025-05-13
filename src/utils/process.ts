@@ -1,4 +1,3 @@
-import { removeBackground } from "@imgly/background-removal";
 import { replaceFileExtension } from ".";
 import { EnumImageType } from "../types/image";
 
@@ -69,31 +68,3 @@ export const compressAndScaleImage = (
         }
     });
 };
-
-export function removeBg(originName: string,
-    imageDataUrl: string,
-    dimensions: { width: number; height: number },
-    quality: number = 100,
-    format = EnumImageType.WEBP): Promise<ProcessResult> {
-
-    return removeBackground(imageDataUrl, {
-        device: 'gpu',
-        output: {
-            format,
-            quality
-        }
-    }).then((blob: Blob) => {
-        console.log(blob);
-        // The result is a blob encoded as PNG. It can be converted to an URL to be used as HTMLImage.src
-        const url = URL.createObjectURL(blob);
-        return Promise.resolve({
-            url,
-            name: replaceFileExtension(originName, format.split('/')[1]),
-            blob,
-            type: format,
-            dimensions: dimensions
-        })
-    })
-
-
-}

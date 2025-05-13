@@ -17,6 +17,7 @@
   width: 100%;
   display: flex;
   gap: 20px;
+  padding-top: 20px;
 }
 
 .image-tool__input {
