@@ -10,7 +10,7 @@ function AppHead() {
         <span className="layout__dot layout__dot--green"></span>
       </div>
       <div className="layout__header-right">
-        <h1 className="layout__header-title">欢迎使用图片工具箱，免费在线压缩您的WebP、JPEG和PNG图片，纯本地运行无需上传</h1>
+        <h1 className="layout__header-title">欢迎使用图片工具箱，免费在线压缩您的WebP、JPEG和PNG图片，纯本地运行无需上传至服务器</h1>
       </div>
     </div>
   );
