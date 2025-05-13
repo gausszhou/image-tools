@@ -1,4 +1,3 @@
-import { Link, Navigate, Route, HashRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Home from './pages/Home';;
 
@@ -35,16 +34,16 @@ function AppBody() {
 
 function App() {
   return (
-    <Router>
-      <div className="layout">
-        <div className="layout__container">
-          <div className="layout__container--inner">
-            <AppHead />
-            <AppBody />
-          </div>
+
+    <div className="layout">
+      <div className="layout__container">
+        <div className="layout__container--inner">
+          <AppHead />
+          <AppBody />
         </div>
       </div>
-    </Router>
+    </div>
+
   );
 }
 
