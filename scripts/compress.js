@@ -27,7 +27,7 @@ let time =
 
 function createZipArchive() {
   const zip = new AdmZip();
-  const outputFile = `${name}-${version}.${time}.zip`;
+  const outputFile = `z-${name}-${version}.${time}.zip`;
   zip.addLocalFolder(distFolderPath);
   zip.writeZip(outputFile);
   console.log(`[info] created ${outputFile} successfully`);
