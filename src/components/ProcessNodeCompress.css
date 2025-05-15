@@ -17,4 +17,10 @@
 .image-converter__quality label {
   white-space: nowrap;
 }
+.image-converter__quality span {
+  line-height: 24px;
+}
 
+.image-converter__select {
+  margin-left: 4px;
+}

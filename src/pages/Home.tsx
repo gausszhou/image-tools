@@ -4,7 +4,7 @@ import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeScale from '../components/ProcessNodeScale';
 import ProcessNodeSource from "../components/ProcessNodeSource";
 import ProcessNodeCompress from "../components/ProcessNodeCompress";
-import { EnumImageType, ImageInfo } from '../types/image';
+import { EnumImageFormat, EnumImageType, ImageInfo } from '../types/image';
 import { getImageDimensions } from '../utils';
 import { compressAndScaleImage } from '../utils/process';
 import './Home.css';
@@ -15,7 +15,7 @@ const ImageScale: React.FC = () => {
   const [progress, setProgress] = useState<number>(0);
 
   const [quality, setQuality] = useState<number>(80);
-  const [format, setFormat] = useState<EnumImageType>(EnumImageType.SAME);
+  const [type, setType] = useState<EnumImageType>(EnumImageType.SAME);
 
   const [scale, setScale] = useState<number>(1);
 
@@ -36,7 +36,7 @@ const ImageScale: React.FC = () => {
         url: originalUrl,
         name: file.name,
         size: file.size,
-        format: file.type as EnumImageType,
+        format: file.type as EnumImageFormat,
         blob: file,
         dimensions
       });
@@ -64,14 +64,11 @@ const ImageScale: React.FC = () => {
       for (let i = 0; i < originalImages.length; i++) {
         const originalImage = originalImages[i];
         const result = await compressAndScaleImage(
-          originalImage.name,
-          originalImage.url,
-          originalImage.dimensions,
+          originalImage,
           {
             scale,
             quality,
-            format, 
-            originalFormat: originalImage.format
+            type, 
           }
         );
 
@@ -79,7 +76,7 @@ const ImageScale: React.FC = () => {
           url: result.url,
           name: result.name,
           size: result.blob.size,
-          format: result.type,
+          format: result.format,
           blob: result.blob,
           dimensions: result.dimensions
         });
@@ -100,9 +97,9 @@ const ImageScale: React.FC = () => {
       <div className="image-tool__body">
         <div className="image-tool__input">
           <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
-          <ProcessNodeCompress quality={quality} format={format} onChange={(quality, format) => {
+          <ProcessNodeCompress quality={quality} type={type} onChange={(quality, format) => {
             setQuality(quality);
-            setFormat(format);
+            setType(format);
           }} ></ProcessNodeCompress>
           <ProcessNodeScale scale={scale} onChange={(scale) => {
             setScale(scale);

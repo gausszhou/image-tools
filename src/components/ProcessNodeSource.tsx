@@ -13,7 +13,7 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const processFiles = async (items: DataTransferItemList | DataTransferItem[] | FileList) => {
+  const processFiles = async (items: DataTransferItemList | DataTransferItem[] | FileList) => {    
     const images: File[] = [];
     const processItem = async (item: DataTransferItem | File) => {
       if (item instanceof File) {

@@ -44,3 +44,19 @@ code {
 ::-webkit-scrollbar-corner {
   background-color: transparent;
 }
+
+.ml-1x {
+  margin-left: 2px;
+}
+
+.ml-2x {
+  margin-left: 4px;
+}
+
+.mr-1x {
+  margin-right: 2px;
+}
+
+.mr-2x {
+  margin-right: 4px;
+}
