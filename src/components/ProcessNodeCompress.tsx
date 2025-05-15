@@ -1,7 +1,8 @@
-import { Select, Slider } from 'antd';
+import { Select, Slider, Tooltip } from 'antd';
 import React from 'react';
 import './ProcessNodeCompress.css';
 import { EnumImageType } from '../types/image';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface CompressProps {
   quality: number;
@@ -30,6 +31,9 @@ const ProcessNodeCompress: React.FC<CompressProps> = ({
           style={{ flex: 1, maxWidth: 300, margin: '0 8px' }}
         />
         <span>{quality}%</span>
+        <Tooltip title="注意：当输入格式为 PNG 格式时使用无损压缩，此项设置无效" color="#272727">
+          <InfoCircleOutlined style={{ marginLeft: '4px', color: '#1677ff' }} />
+        </Tooltip>
       </div>
       <div className="image-converter__quality">
         <label htmlFor="quality">文件格式:</label>

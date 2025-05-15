@@ -1,5 +1,7 @@
 import { replaceFileExtension } from ".";
 import { EnumImageType } from "../types/image";
+// @ts-ignore
+import UPNG from 'upng-js';
 
 export interface ProcessResult {
     url: string;
@@ -32,7 +34,8 @@ export const compressAndScaleImage = (
     options: ProcessOptions
 ): Promise<ProcessResult> => {
     const { scale, quality, format, originalFormat } = options;
-    const targetFormat = format === EnumImageType.SAME ? originalFormat: format;
+    const targetFormat = format === EnumImageType.SAME ? originalFormat : format;
+
     return new Promise((resolve, reject) => {
         try {
             const img = new Image();
@@ -46,6 +49,32 @@ export const compressAndScaleImage = (
                     return;
                 }
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // 如果是 PNG 格式，使用 UPNG 进行处理
+                if (targetFormat === EnumImageType.PNG) {
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pngData = UPNG.encode(
+                        [imageData.data.buffer],
+                        canvas.width,
+                        canvas.height,
+                        0  // 0 表示无损压缩
+                    );
+                    const blob = new Blob([pngData], { type: EnumImageType.PNG });
+                    const url = URL.createObjectURL(blob);
+                    resolve({
+                        url,
+                        name: replaceFileExtension(originName, 'png'),
+                        blob,
+                        type: EnumImageType.PNG,
+                        dimensions: {
+                            width: canvas.width,
+                            height: canvas.height
+                        }
+                    });
+                    return;
+                }
+
+                // 其他格式使用原有的 canvas.toBlob 方法
                 canvas.toBlob(
                     (blob) => {
                         if (!blob) {
