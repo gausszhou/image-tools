@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Slider } from 'antd';
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeScale from '../components/ProcessNodeScale';
 import ProcessNodeSource from "../components/ProcessNodeSource";
@@ -10,7 +11,8 @@ import './Home.css';
 
 const ImageScale: React.FC = () => {
   const [originalImages, setOriginalImages] = useState<ImageInfo[]>([]);
-  const [scaledImages, setScaledImages] = useState<ImageInfo[]>([]);
+  const [processedImages, setProcessedImages] = useState<ImageInfo[]>([]);
+  const [progress, setProgress] = useState<number>(0);
 
   const [quality, setQuality] = useState<number>(80);
   const [format, setFormat] = useState<EnumImageType>(EnumImageType.WEBP);
@@ -50,8 +52,8 @@ const ImageScale: React.FC = () => {
       });
     }
 
-    setOriginalImages(processedImages);
-    setScaledImages([]);
+    setOriginalImages((prev) => prev.concat(processedImages));
+    setProcessedImages([]);
   };
 
   const onImageError = (err: Error) => {
@@ -68,10 +70,12 @@ const ImageScale: React.FC = () => {
     try {
       setStatus('处理中...');
       setError('');
+      setProgress(0);
 
       const processedImages: ImageInfo[] = [];
 
-      for (const originalImage of originalImages) {
+      for (let i = 0; i < originalImages.length; i++) {
+        const originalImage = originalImages[i];
         const result = await compressAndScaleImage(
           originalImage.name,
           originalImage.url,
@@ -88,9 +92,14 @@ const ImageScale: React.FC = () => {
           blob: result.blob,
           dimensions: result.dimensions
         });
+
+
+        // 更新进度
+        setProcessedImages(processedImages);
+        setProgress(Math.round(((i + 1) / originalImages.length) * 100));
       }
 
-      setScaledImages(processedImages);
+      setProcessedImages(processedImages);
       setStatus('处理完成');
     } catch (error: any) {
       setStatus('');
@@ -113,12 +122,20 @@ const ImageScale: React.FC = () => {
             setLockRatio(lockRatio)
           }} ></ProcessNodeScale>
           {originalImages.length > 0 && (
-            <button className="image-tool__button" onClick={processImages}>
-              开始处理 ({originalImages.length} 张图片)
-            </button>
+            <>
+              <button className="image-tool__button" onClick={processImages}>
+                开始处理 ({originalImages.length} 张图片)
+              </button>
+              <div style={{ marginTop: '16px', padding: '0 10px' }}>
+                  <Slider value={progress}  />
+                  <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                    <div className="image-tool__status">    处理进度：{progress}%</div>
+                  </div>
+                </div>
+            </>
           )}
           {error && <div className="image-tool__error">{error}</div>}
-          {status && <div className="image-tool__status">{status}</div>}
+          
         </div>
         <div className="image-tool__output">
           {originalImages.length > 0 && (
@@ -137,11 +154,11 @@ const ImageScale: React.FC = () => {
                   ))}
                 </div>
               </div>
-              {scaledImages.length > 0 && (
+              {processedImages.length > 0 && (
                 <div className="image-tool__preview-group">
                   <h3>处理后图片</h3>
                   <div className="image-tool__list">
-                    {scaledImages.map((image, index) => (
+                    {processedImages.map((image, index) => (
                       <ProcessNodeDestination
                         key={`scaled-${index}`}
                         title={`处理后图片 ${index + 1}`}

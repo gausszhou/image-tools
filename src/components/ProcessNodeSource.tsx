@@ -13,7 +13,7 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const processFiles = async (items: DataTransferItem[] | FileList) => {
+  const processFiles = async (items: DataTransferItemList | DataTransferItem[] | FileList) => {
     const images: File[] = [];
     const processItem = async (item: DataTransferItem | File) => {
       if (item instanceof File) {
@@ -26,9 +26,9 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
       if (item.kind === 'file') {
         const entry = item.webkitGetAsEntry();
         if (entry && entry.isDirectory) {
-          const dirReader = entry.createReader();
+          const dirReader = (entry as any).createReader();
           const entries = await new Promise<FileSystemEntry[]>((resolve) => {
-            dirReader.readEntries((entries) => resolve(entries));
+            dirReader.readEntries((entries: any) => resolve(entries));
           });
 
           for (const entry of entries) {
@@ -106,15 +106,13 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        <h3>点击或拖放图片/文件夹到此处</h3>
-        <p>支持 WebP, JPG, PNG 等格式</p>
+        <h3>点击或拖放文件/文件夹到此处</h3>
+        <p>支持 SVG, WebP, JPG, PNG 等格式</p>
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
           accept="image/*"
-          webkitdirectory=""
-          directory=""
           multiple
           style={{ display: 'none' }}
         />
