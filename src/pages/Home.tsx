@@ -26,13 +26,13 @@ const ImageScale: React.FC = () => {
   const onImageSuccess = async (files: File[]) => {
     setStatus('图片已就绪');
     setError('');
-    
+
     const processedImages: ImageInfo[] = [];
-    
+
     for (const file of files) {
       const originalUrl = URL.createObjectURL(file);
       const dimensions = await getImageDimensions(originalUrl);
-      
+
       // 使用第一张图片的尺寸作为初始缩放尺寸
       if (processedImages.length === 0 && dimensions) {
         setWidth(dimensions.width);
@@ -68,9 +68,9 @@ const ImageScale: React.FC = () => {
     try {
       setStatus('处理中...');
       setError('');
-      
+
       const processedImages: ImageInfo[] = [];
-      
+
       for (const originalImage of originalImages) {
         const result = await compressAndScaleImage(
           originalImage.name,
@@ -79,7 +79,7 @@ const ImageScale: React.FC = () => {
           quality,
           format
         );
-        
+
         processedImages.push({
           url: result.url,
           name: result.name,
@@ -89,7 +89,7 @@ const ImageScale: React.FC = () => {
           dimensions: result.dimensions
         });
       }
-      
+
       setScaledImages(processedImages);
       setStatus('处理完成');
     } catch (error: any) {
@@ -97,7 +97,7 @@ const ImageScale: React.FC = () => {
       onImageError(error);
     }
   };
-  
+
   return (
     <div className="image-tool">
       <div className="image-tool__body">
@@ -125,24 +125,30 @@ const ImageScale: React.FC = () => {
             <div className="image-tool__preview">
               <div className="image-tool__preview-group">
                 <h3>原始图片</h3>
-                {originalImages.map((image, index) => (
-                  <ProcessNodeDestination 
-                    key={`original-${index}`}
-                    title={`原始图片 ${index + 1}`} 
-                    image={image}
-                  />
-                ))}
+                <div className="image-tool__list">
+
+
+                  {originalImages.map((image, index) => (
+                    <ProcessNodeDestination
+                      key={`original-${index}`}
+                      title={`原始图片 ${index + 1}`}
+                      image={image}
+                    />
+                  ))}
+                </div>
               </div>
               {scaledImages.length > 0 && (
                 <div className="image-tool__preview-group">
                   <h3>处理后图片</h3>
-                  {scaledImages.map((image, index) => (
-                    <ProcessNodeDestination 
-                      key={`scaled-${index}`}
-                      title={`处理后图片 ${index + 1}`} 
-                      image={image}
-                    />
-                  ))}
+                  <div className="image-tool__list">
+                    {scaledImages.map((image, index) => (
+                      <ProcessNodeDestination
+                        key={`scaled-${index}`}
+                        title={`处理后图片 ${index + 1}`}
+                        image={image}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
