@@ -1,10 +1,8 @@
-// 文件输入
-
 import React, { useRef, useState } from 'react';
 import './ProcessNodeSource.css';
 
 interface SourceProps {
-  onChange: (file: File) => void;
+  onChange: (files: File[]) => void;
   onError: (e: Error) => void;
 }
 
@@ -12,26 +10,71 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
   onChange,
   onError
 }) => {
-
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const onFileChange = (file: File) => {
-    if (file.type.startsWith('image/')) {
-      onChange(file);
-    } else {
-      onError(new Error('请上传图片文件'));
-    }
-  }
+  const processFiles = async (items: DataTransferItem[] | FileList) => {
+    const images: File[] = [];
+    const processItem = async (item: DataTransferItem | File) => {
+      if (item instanceof File) {
+        if (item.type.startsWith('image/')) {
+          images.push(item);
+        }
+        return;
+      }
 
-  const handleDrop = (e: React.DragEvent) => {
+      if (item.kind === 'file') {
+        const entry = item.webkitGetAsEntry();
+        if (entry && entry.isDirectory) {
+          const dirReader = entry.createReader();
+          const entries = await new Promise<FileSystemEntry[]>((resolve) => {
+            dirReader.readEntries((entries) => resolve(entries));
+          });
+
+          for (const entry of entries) {
+            if (entry.isFile) {
+              const fileEntry = entry as FileSystemFileEntry;
+              const file = await new Promise<File>((resolve) => {
+                fileEntry.file((file) => resolve(file));
+              });
+              if (file.type.startsWith('image/')) {
+                images.push(file);
+              }
+            }
+          }
+        } else if (entry && entry.isFile) {
+          const fileEntry = entry as FileSystemFileEntry;
+          const file = await new Promise<File>((resolve) => {
+            fileEntry.file((file) => resolve(file));
+          });
+          if (file.type.startsWith('image/')) {
+            images.push(file);
+          }
+        }
+      }
+    };
+
+    if (items instanceof FileList) {
+      await Promise.all(Array.from(items).map(processItem));
+    } else {
+      await Promise.all(Array.from(items).map(processItem));
+    }
+
+    if (images.length === 0) {
+      onError(new Error('未找到图片文件'));
+      return;
+    }
+
+    onChange(images);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      onFileChange(file);
+    const items = e.dataTransfer.items;
+    if (items.length > 0) {
+      await processFiles(items);
     }
   };
 
@@ -48,10 +91,9 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
-      const file = e.target.files[0];
-      onFileChange(file);
+      await processFiles(e.target.files);
     }
   };
 
@@ -71,6 +113,9 @@ const ProcessNodeSource: React.FC<SourceProps> = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           accept="image/*"
+          webkitdirectory=""
+          directory=""
+          multiple
           style={{ display: 'none' }}
         />
       </div>

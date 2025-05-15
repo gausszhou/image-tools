@@ -9,8 +9,8 @@ import { compressAndScaleImage } from '../utils/process';
 import './Home.css';
 
 const ImageScale: React.FC = () => {
-  const [originalImage, setOriginalImage] = useState<ImageInfo | null>(null);
-  const [scaledImage, setScaledImage] = useState<ImageInfo | null>(null);
+  const [originalImages, setOriginalImages] = useState<ImageInfo[]>([]);
+  const [scaledImages, setScaledImages] = useState<ImageInfo[]>([]);
 
   const [quality, setQuality] = useState<number>(80);
   const [format, setFormat] = useState<EnumImageType>(EnumImageType.WEBP);
@@ -23,26 +23,35 @@ const ImageScale: React.FC = () => {
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const onImageSuccess = async (file: File) => {
+  const onImageSuccess = async (files: File[]) => {
     setStatus('图片已就绪');
     setError('');
+    
+    const processedImages: ImageInfo[] = [];
+    
+    for (const file of files) {
+      const originalUrl = URL.createObjectURL(file);
+      const dimensions = await getImageDimensions(originalUrl);
+      
+      // 使用第一张图片的尺寸作为初始缩放尺寸
+      if (processedImages.length === 0 && dimensions) {
+        setWidth(dimensions.width);
+        setHeight(dimensions.height);
+        setAspectRatio(dimensions.width / dimensions.height);
+      }
 
-    const originalUrl = URL.createObjectURL(file);
-    const dimensions = await getImageDimensions(originalUrl);
-    if (dimensions) {
-      setWidth(dimensions.width);
-      setHeight(dimensions.height);
-      setAspectRatio(dimensions.width / dimensions.height);
+      processedImages.push({
+        url: originalUrl,
+        name: file.name,
+        size: file.size,
+        type: file.type as EnumImageType,
+        blob: file,
+        dimensions
+      });
     }
 
-    setOriginalImage({
-      url: originalUrl,
-      name: file.name,
-      size: file.size,
-      type: file.type as EnumImageType,
-      blob: file,
-      dimensions
-    });
+    setOriginalImages(processedImages);
+    setScaledImages([]);
   };
 
   const onImageError = (err: Error) => {
@@ -50,8 +59,8 @@ const ImageScale: React.FC = () => {
     setStatus('');
   }
 
-  const processImage = async () => {
-    if (!originalImage) {
+  const processImages = async () => {
+    if (originalImages.length === 0) {
       setError('请选择图片');
       return;
     }
@@ -59,19 +68,33 @@ const ImageScale: React.FC = () => {
     try {
       setStatus('处理中...');
       setError('');
-      const result = await compressAndScaleImage(originalImage.name, originalImage.url, { width, height }, quality, format)
-      setScaledImage({
-        url: result.url,
-        name: result.name,
-        size: result.blob.size,
-        type: result.type,
-        blob: result.blob,
-        dimensions: result.dimensions
-      });
+      
+      const processedImages: ImageInfo[] = [];
+      
+      for (const originalImage of originalImages) {
+        const result = await compressAndScaleImage(
+          originalImage.name,
+          originalImage.url,
+          { width, height },
+          quality,
+          format
+        );
+        
+        processedImages.push({
+          url: result.url,
+          name: result.name,
+          size: result.blob.size,
+          type: result.type,
+          blob: result.blob,
+          dimensions: result.dimensions
+        });
+      }
+      
+      setScaledImages(processedImages);
       setStatus('处理完成');
     } catch (error: any) {
       setStatus('');
-      onImageError(error)
+      onImageError(error);
     }
   };
   
@@ -89,20 +112,40 @@ const ImageScale: React.FC = () => {
             setHeight(height);
             setLockRatio(lockRatio)
           }} ></ProcessNodeScale>
-          {originalImage && (
-            <button className="image-tool__button" onClick={processImage}>
-              开始
+          {originalImages.length > 0 && (
+            <button className="image-tool__button" onClick={processImages}>
+              开始处理 ({originalImages.length} 张图片)
             </button>
           )}
           {error && <div className="image-tool__error">{error}</div>}
           {status && <div className="image-tool__status">{status}</div>}
         </div>
         <div className="image-tool__output">
-          {originalImage && scaledImage && (
-              <div className="image-tool__preview">
-                <ProcessNodeDestination title="原始图片" image={originalImage}></ProcessNodeDestination>
-                <ProcessNodeDestination title="缩放后图片" image={scaledImage}></ProcessNodeDestination>
+          {originalImages.length > 0 && (
+            <div className="image-tool__preview">
+              <div className="image-tool__preview-group">
+                <h3>原始图片</h3>
+                {originalImages.map((image, index) => (
+                  <ProcessNodeDestination 
+                    key={`original-${index}`}
+                    title={`原始图片 ${index + 1}`} 
+                    image={image}
+                  />
+                ))}
               </div>
+              {scaledImages.length > 0 && (
+                <div className="image-tool__preview-group">
+                  <h3>处理后图片</h3>
+                  {scaledImages.map((image, index) => (
+                    <ProcessNodeDestination 
+                      key={`scaled-${index}`}
+                      title={`处理后图片 ${index + 1}`} 
+                      image={image}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
