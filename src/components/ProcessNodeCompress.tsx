@@ -37,6 +37,7 @@ const ProcessNodeCompress: React.FC<CompressProps> = ({
           onChange(quality, value);
         }}
           options={[
+            { value: EnumImageType.SAME, label: '原格式' },
             { value: EnumImageType.WEBP, label: 'WEBP' },
             { value: EnumImageType.JPEG, label: 'JPEG' },
             { value: EnumImageType.PNG, label: 'PNG' },

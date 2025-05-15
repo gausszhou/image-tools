@@ -1,78 +1,32 @@
-import { InputNumber, Checkbox } from 'antd';
-import React, { Ref } from 'react';
+import { Radio } from 'antd';
+import React from 'react';
 import './ProcessNodeScale.css';
 
-interface CompressProps {
-    width: number;
-    height: number;
-    aspectRatio: number;
-    lockRatio: boolean;
-    onChange: (width: number, height: number, lockRatio: boolean) => void;
+interface ScaleProps {
+    scale: number;
+    onChange: (scale: number) => void;
 }
 
-const ProcessNodeScale: React.FC<CompressProps> = ({
-    width,
-    height,
-    aspectRatio,
-    lockRatio,
+const ProcessNodeScale: React.FC<ScaleProps> = ({
+    scale,
     onChange
 }) => {
+    const scaleOptions = [0.25, 0.5, 1, 2, 4];
+
     return (
         <div className="image-scale__controls">
             <div className="image-scale__dimensions">
-                <div className="image-scale__input-group">
-                    <label htmlFor="width">分辨率宽度:</label>
-                    <InputNumber
-                        id="width"
-                        value={width}
-                        onChange={(value) => {
-                            const newWidth = Number(value || 0);
-                            newWidth;
-                            let newHeight = height;
-                            if (lockRatio) {
-                                newHeight = Math.round(newWidth / aspectRatio);
-                            }
-                            onChange(newWidth, newHeight, lockRatio);
-                        }}
-                        min={1}
-                        precision={0}
-                        style={{ width: 100 }}
-                    />
-                    <span>PX</span>
-                </div>
-                <div className="image-scale__input-group">
-                    <label htmlFor="width">分辨率高度:</label>
-                    <InputNumber
-                        id="height"
-                        value={height}
-                        onChange={(value) => {
-                            const newHeight = Number(value || 0);
-                            let newWidth = width;
-                            if (lockRatio) {
-                                newWidth = (Math.round(newHeight * aspectRatio));
-                            }
-                            onChange(newWidth, newHeight, lockRatio);
-                        }}
-                        min={1}
-                        precision={0}
-                        style={{ width: 100 }}
-                    />
-                    <span>PX</span>
-                </div>
-                <div className="image-scale__lock">
-                    <label>
-                        锁定纵横比:
-                    </label>
-                    <Checkbox
-                        className='image-scale__checkbox'
-                        checked={lockRatio}
-                        onChange={(e) => {
-                            onChange(width, height, e.target.checked)
-                        }}
-                    />
-                </div>
+                <Radio.Group 
+                    value={scale} 
+                    onChange={(e) => onChange(e.target.value)}
+                >   
+                    {scaleOptions.map((value) => (
+                        <Radio className="image-scale__radio" key={value} value={value}>
+                            {value}x
+                        </Radio>
+                    ))}
+                </Radio.Group>
             </div>
-
         </div>
     );
 };

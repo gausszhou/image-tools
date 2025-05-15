@@ -9,29 +9,37 @@ export interface ProcessResult {
     dimensions: { width: number; height: number }
 }
 
+export interface ProcessOptions {
+    scale: number;
+    quality: number;
+    format: EnumImageType;
+    originalFormat: EnumImageType;
+}
+
 /**
  * 图片文件大小压缩 / 图片尺寸放缩
  * 使用 canvas.toBlob()
+ * @Param originName 原始文件名
  * @param imageDataUrl 表示图片文件的一个临时地址
  * @param dimensions 
- * @param quality 
- * @param format 
+ * @param options 
  * @returns 
  */
 export const compressAndScaleImage = (
     originName: string,
     imageDataUrl: string,
     dimensions: { width: number; height: number },
-    quality: number = 100,
-    format = EnumImageType.WEBP
+    options: ProcessOptions
 ): Promise<ProcessResult> => {
+    const { scale, quality, format, originalFormat } = options;
+    const targetFormat = format === EnumImageType.SAME ? originalFormat: format;
     return new Promise((resolve, reject) => {
         try {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width = dimensions.width;
-                canvas.height = dimensions.height;
+                canvas.width = Math.round(dimensions.width * scale);
+                canvas.height = Math.round(dimensions.height * scale);
                 const ctx = canvas.getContext('2d');
                 if (!ctx) {
                     reject(new Error('无法创建canvas上下文'));
@@ -47,13 +55,16 @@ export const compressAndScaleImage = (
                         const url = URL.createObjectURL(blob);
                         resolve({
                             url,
-                            name: replaceFileExtension(originName, format.split('/')[1]),
+                            name: replaceFileExtension(originName, targetFormat.split('/')[1]),
                             blob,
-                            type: format,
-                            dimensions: dimensions
+                            type: targetFormat,
+                            dimensions: {
+                                width: canvas.width,
+                                height: canvas.height
+                            }
                         });
                     },
-                    format,
+                    targetFormat,
                     quality / 100
                 );
             };

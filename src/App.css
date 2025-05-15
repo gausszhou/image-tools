@@ -39,8 +39,7 @@
 }
 
 .image-tool__input {
-  width: 300px;
-  min-width: 300px;
+  min-width: 360px;
   padding-left: 20px;
 }
 
@@ -120,11 +119,7 @@
     flex-direction: row;
   }
 
-  .image-tool__input {
-    width: 300px;
-    min-width: 300px;
-    padding-left: 20px;
-  }
+
 
   .image-tool__output {
     flex: 1;
