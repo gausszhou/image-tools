@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Slider } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeScale from '../components/ProcessNodeScale';
@@ -10,7 +11,8 @@ import { getImageDimensions } from '../utils';
 import { compressAndScaleImage } from '../utils/process';
 import './Home.css';
 
-const ImageScale: React.FC = () => {
+const Home: React.FC = () => {
+  const [sourceKey, setSourceKey] = useState<number>(0);
   const [originalImages, setOriginalImages] = useState<ImageInfo[]>([]);
   const [processedImages, setProcessedImages] = useState<ImageInfo[]>([]);
   const [progress, setProgress] = useState<number>(0);
@@ -46,25 +48,6 @@ const ImageScale: React.FC = () => {
     setError(err instanceof Error ? err.message : '处理图片时出错');
   }
 
-  // 添加删除原始图片的处理函数
-  const handleDeleteOriginal = (image: ImageInfo) => {
-    URL.revokeObjectURL(image.url);
-    setOriginalImages(prev => prev.filter(item => item.id !== image.id));
-    
-    // 当删除原始图片时，也需要删除对应的处理后图片
-    const processedImage = processedImages.find(item => item.id === image.id);
-    if (processedImage) {
-      URL.revokeObjectURL(processedImage.url);
-    }
-    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
-  };
-
-  // 添加删除处理后图片的处理函数
-  const handleDeleteProcessed = (image: ImageInfo) => {
-    URL.revokeObjectURL(image.url);
-    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
-  };
-
   const processImages = async () => {
     if (originalImages.length === 0) {
       setError('请选择图片');
@@ -84,7 +67,7 @@ const ImageScale: React.FC = () => {
           {
             scale,
             quality,
-            type, 
+            type,
           }
         );
 
@@ -109,11 +92,58 @@ const ImageScale: React.FC = () => {
     }
   };
 
+  // 添加删除原始图片的处理函数
+  const handleDeleteOriginal = (image: ImageInfo) => {
+    URL.revokeObjectURL(image.url);
+    setOriginalImages(prev => prev.filter(item => item.id !== image.id));
+    // 当删除原始图片时，也需要删除对应的处理后图片
+    const processedImage = processedImages.find(item => item.id === image.id);
+    if (processedImage) {
+      URL.revokeObjectURL(processedImage.url);
+    }
+    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
+    // 更新key以强制重新渲染ProcessNodeSource组件
+    setSourceKey(prev => prev + 1);
+  };
+
+  // 添加删除处理后图片的处理函数
+  const handleDeleteProcessed = (image: ImageInfo) => {
+    URL.revokeObjectURL(image.url);
+    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
+  };
+
+  // 添加清空原始图片列表的处理函数
+  const handleClearOriginal = () => {
+    originalImages.forEach(image => {
+      URL.revokeObjectURL(image.url);
+    });
+    processedImages.forEach(image => {
+      URL.revokeObjectURL(image.url);
+    });
+    setOriginalImages([]);
+    setProcessedImages([]);
+    // 更新key以强制重新渲染ProcessNodeSource组件
+    setSourceKey(prev => prev + 1);
+  };
+
+  // 添加清空处理后图片列表的处理函数
+  const handleClearProcessed = () => {
+    processedImages.forEach(image => {
+      URL.revokeObjectURL(image.url);
+    });
+    setProcessedImages([]);
+  }
+
+
   return (
     <div className="image-tool">
       <div className="image-tool__body">
         <div className="image-tool__input">
-          <ProcessNodeSource onChange={onImageSuccess} onError={onImageError}></ProcessNodeSource>
+          <ProcessNodeSource
+            key={sourceKey}
+            onChange={onImageSuccess}
+            onError={onImageError}
+          />
           <ProcessNodeCompress quality={quality} type={type} onChange={(quality, format) => {
             setQuality(quality);
             setType(format);
@@ -141,7 +171,13 @@ const ImageScale: React.FC = () => {
           {originalImages.length > 0 && (
             <div className="image-tool__preview">
               <div className="image-tool__preview-group">
-                <h3>原始图片</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3>原始图片</h3>
+                  <DeleteOutlined
+                    onClick={handleClearOriginal}
+                    style={{ fontSize: '16px', cursor: 'pointer' }}
+                  />
+                </div>
                 <div className="image-tool__list">
                   {originalImages.map((image) => (
                     <ProcessNodeDestination
@@ -155,7 +191,13 @@ const ImageScale: React.FC = () => {
               </div>
               {processedImages.length > 0 && (
                 <div className="image-tool__preview-group">
-                  <h3>处理后图片</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3>处理后图片</h3>
+                    <DeleteOutlined
+                      onClick={handleClearProcessed}
+                      style={{ fontSize: '16px', cursor: 'pointer' }}
+                    />
+                  </div>
                   <div className="image-tool__list">
                     {processedImages.map((image) => (
                       <ProcessNodeDestination
@@ -176,4 +218,4 @@ const ImageScale: React.FC = () => {
   );
 };
 
-export default ImageScale;
+export default Home;
