@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Slider } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 import ProcessNodeDestination from '../components/ProcessNodeDestination';
 import ProcessNodeScale from '../components/ProcessNodeScale';
 import ProcessNodeSource from "../components/ProcessNodeSource";
@@ -18,21 +19,17 @@ const ImageScale: React.FC = () => {
   const [type, setType] = useState<EnumImageType>(EnumImageType.SAME);
 
   const [scale, setScale] = useState<number>(1);
-
-
-  const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const onImageSuccess = async (files: File[]) => {
-
     setError('');
-
     const processedImages: ImageInfo[] = [];
 
     for (const file of files) {
       const originalUrl = URL.createObjectURL(file);
       const dimensions = await getImageDimensions(originalUrl);
       processedImages.push({
+        id: uuidv4(),
         url: originalUrl,
         name: file.name,
         size: file.size,
@@ -48,6 +45,25 @@ const ImageScale: React.FC = () => {
   const onImageError = (err: Error) => {
     setError(err instanceof Error ? err.message : '处理图片时出错');
   }
+
+  // 添加删除原始图片的处理函数
+  const handleDeleteOriginal = (image: ImageInfo) => {
+    URL.revokeObjectURL(image.url);
+    setOriginalImages(prev => prev.filter(item => item.id !== image.id));
+    
+    // 当删除原始图片时，也需要删除对应的处理后图片
+    const processedImage = processedImages.find(item => item.id === image.id);
+    if (processedImage) {
+      URL.revokeObjectURL(processedImage.url);
+    }
+    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
+  };
+
+  // 添加删除处理后图片的处理函数
+  const handleDeleteProcessed = (image: ImageInfo) => {
+    URL.revokeObjectURL(image.url);
+    setProcessedImages(prev => prev.filter(item => item.id !== image.id));
+  };
 
   const processImages = async () => {
     if (originalImages.length === 0) {
@@ -73,6 +89,7 @@ const ImageScale: React.FC = () => {
         );
 
         processedImages.push({
+          id: originalImage.id, // 使用原始图片的 id
           url: result.url,
           name: result.name,
           size: result.blob.size,
@@ -126,13 +143,12 @@ const ImageScale: React.FC = () => {
               <div className="image-tool__preview-group">
                 <h3>原始图片</h3>
                 <div className="image-tool__list">
-
-
-                  {originalImages.map((image, index) => (
+                  {originalImages.map((image) => (
                     <ProcessNodeDestination
-                      key={`original-${index}`}
-                      title={`原始图片 ${index + 1}`}
+                      key={image.id}
+                      title={`原始图片 ${originalImages.findIndex(img => img.id === image.id) + 1}`}
                       image={image}
+                      onDelete={() => handleDeleteOriginal(image)}
                     />
                   ))}
                 </div>
@@ -141,11 +157,12 @@ const ImageScale: React.FC = () => {
                 <div className="image-tool__preview-group">
                   <h3>处理后图片</h3>
                   <div className="image-tool__list">
-                    {processedImages.map((image, index) => (
+                    {processedImages.map((image) => (
                       <ProcessNodeDestination
-                        key={`scaled-${index}`}
-                        title={`处理后图片 ${index + 1}`}
+                        key={image.id}
+                        title={`处理后图片 ${processedImages.findIndex(img => img.id === image.id) + 1}`}
                         image={image}
+                        onDelete={() => handleDeleteProcessed(image)}
                       />
                     ))}
                   </div>

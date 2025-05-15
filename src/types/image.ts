@@ -13,6 +13,7 @@ export enum EnumImageFormat {
 }
 
 export interface ImageInfo {
+  id: string;
   url: string;
   name: string;
   size: number;

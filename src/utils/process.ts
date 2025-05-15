@@ -124,7 +124,7 @@ export const compressAndScaleImage = (
                         [imageData.data.buffer],
                         canvas.width,
                         canvas.height,
-                        0  // 0 表示无损压缩
+                        Math.floor((100 - quality) * 2.56)  // 0 表示无损压缩
                     );
                     const blob = new Blob([pngData], { type: EnumImageFormat.PNG });
                     const url = URL.createObjectURL(blob);
