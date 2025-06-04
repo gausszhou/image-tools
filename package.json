@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "rm -rf dist && tsc && vite build && node scripts/compress.js",
+    "build": "rm -rf dist && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

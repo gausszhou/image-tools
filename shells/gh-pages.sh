@@ -7,8 +7,8 @@ set -e
 echo "删除旧的构建目录..."
 rm -rf dist
 
-mkdir dist
-cp refresh.html dist/index.html
+# 构建
+npm run build
 
 # 进入构建目录
 cd dist
