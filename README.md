@@ -2,7 +2,8 @@
 
 欢迎使用图片工具箱，免费在线压缩您的WebP、JPEG和PNG图片，纯本地运行无需上传至服务器
 
-![](https://www.gausszhou.top/static/data/github/image-tools/5.webp)
+[![image-tools](https://www.gausszhou.top/static/data/github/image-tools/1.png)](https://gausszhou.github.io/image-tools/)
+
 
 ## Features
 
