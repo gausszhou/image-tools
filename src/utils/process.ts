@@ -32,9 +32,6 @@ function getValidFormat(format: string): EnumImageFormat {
 }
 
 function getTargetFormat(type: EnumImageType, originalFormat: EnumImageFormat): EnumImageFormat {
-    if (originalFormat === EnumImageFormat.SVG) {
-        return EnumImageFormat.SVG;
-    }
     if (type === EnumImageType.SAME) {
         return getValidFormat(originalFormat);
     }
@@ -103,6 +100,7 @@ export const compressAndScaleImage = (
                 })
             };
             reader.readAsText(blob); // 以文本形式读取文件
+            return;
         }
         try {
             const img = new Image();
