@@ -78,12 +78,12 @@ export const compressAndScaleImage = (
     originImage: ImageInfo,
     processOptions: ProcessOptions
 ): Promise<ProcessResult> => {
-    const { url, name: originName, blob, format, dimensions } = originImage;
+    const { url, name: originName, blob, format: originalFormat, dimensions } = originImage;
     const { scale, quality, type } = processOptions;
-    const targetFormat = getTargetFormat(type, format);
+    const targetFormat = getTargetFormat(type, originalFormat);
     return new Promise(async (resolve, reject) => {
         // 如果是 SVG 格式，读取 svg 文件内容并进行压缩
-        if (targetFormat === EnumImageFormat.SVG) {
+        if (originalFormat === EnumImageFormat.SVG && targetFormat === EnumImageFormat.SVG) {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const svgString = e.target!.result;
